@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BookingHotel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BookingHotel.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-blue">
+            <a class="nav-link navbar-brand" asp-area="" asp-controller="Hotel" asp-action="Index">Booking Hotel</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Phòng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Tiện nghi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Liên hệ</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search hotels..." aria-label="Search">
+                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Tìm kiếm</button>
+                </form>
+                <div class="btn_log_sign">
+                    <button class="btn btn-light mr-2 ml-2 btn-sm" type="button">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Hotel" asp-action="Login">Login</a>
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" type="button">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Hotel" asp-action="SignUp">Sign up</a>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-blue text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>About Us</h5>
+                    <p>Booking Hotel là web được làm bởi Đức Thắng !!!</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="text-white" href="#">Home</a></li>
+                        <li><a class="text-white" href="#">Rooms</a></li>
+                        <li><a class="text-white" href="#">Amenities</a></li>
+                        <li><a class="text-white" href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Follow Us</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="text-white" href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+                        <li><a class="text-white" href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a class="text-white" href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt"></i> Q12, Ho Chi Minh City, VietNam</li>
+                        <li><i class="fas fa-phone"></i> 0703635306</li>
+                        <li><i class="fas fa-envelope"></i> ducthang140912@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 Booking Hotel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
