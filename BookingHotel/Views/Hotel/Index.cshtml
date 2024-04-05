@@ -1,29 +1,44 @@
-﻿<h2>Hotels</h2>
+﻿@model IEnumerable<BookingHotel.Models.Hotel>
+<h1>Hotels</h1>
+<p>
+    <a asp-action="Add">Add Hotel</a>
+</p>
 
 <table class="table">
     <thead>
         <tr>
             <th>Hotel Name</th>
-            <th>City</th>
-            <th>Country</th>
+            <th>Description</th>
+            <th>Address</th>
+            <th>Region</th>
             <th>Image Url</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @* @foreach (var hotel in Model)
+        @if (Model != null)
         {
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    <a asp-action="#" asp-route-id="@hotel.Id">View</a> |
-                    <a asp-action="#" asp-route-id="@hotel.Id">Edit</a> |
-                    <a asp-action="#" asp-route-id="@hotel.Id">Delete</a>
-                </td>
-            </tr>
-        } *@
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Address</td>
+                    <td>@item.RegionId</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="Product Image" style="max-width: 200px; max-height: 200px" />
+                        }
+                    </td>
+                    <th></th>
+                    <td>
+                        <a asp-action="#" asp-route-id="@item.Id">View</a>
+                        <a asp-action="#" asp-route-id="@item.Id">Edit</a>
+                        <a asp-action="#" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>
