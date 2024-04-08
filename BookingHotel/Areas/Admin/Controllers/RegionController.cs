@@ -109,5 +109,22 @@ namespace BookingHotel.Areas.Admin.Controllers
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
             return View(region);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var region = await _regionRepository.GetByIdAsync(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            return View(region);
+        }
+        // Xử lý xóa sản phẩm
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _regionRepository.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -1,10 +1,13 @@
 ﻿@model BookingHotel.Models.Hotel
 @using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
-    ViewData["Title"] = "Add Hotel";
+    ViewData["Title"] = "Update Hotel";
 }
-<h2 class="pt-3">Add Hotels</h2>
-<form asp-action="AddImage" method="post" enctype="multipart/form-data">
+<h2>Edit Product</h2>
+<a asp-action="index">Return to home</a>
+<form asp-action="UpdateImage" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
@@ -26,8 +29,9 @@
                 class="form-control"></select>
     </div>
     <div class="form-group">
-        <label asp-for="ImageUrl">Hotel Image</label>
+        <label asp-for="ImageUrl">Product Image</label>
         <input type="file" asp-for="ImageUrl" class="form-control" />
+        <img src="@Model.ImageUrl" alt="Product Image" style="max-width: 200px;" />
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Add</button>
+    <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
 </form>

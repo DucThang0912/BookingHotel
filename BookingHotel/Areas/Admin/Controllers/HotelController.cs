@@ -85,6 +85,55 @@ namespace BookingHotel.Areas.Admin.Controllers
 
             return "/images/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
+        public async Task<IActionResult> Update(int id)
+        {
+            var hotel = await _hotelRepository.GetByIdAsync(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
+            var regions = await _regionRepository.GetAllAsync();
+            ViewBag.Regions = new SelectList(regions, "Id", "Name");
+            return View(hotel);
+        }
+        [HttpPost, ActionName("UpdateImage")]
+        public async Task<IActionResult> Update(Hotel hotel, IFormFile? imageUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                if (imageUrl != null && imageUrl.Length > 0)
+                {
+                    string imagePath = await SaveImage(imageUrl);
+                    hotel.ImageUrl = imagePath;
+                }
+                else
+                {
+                    hotel.ImageUrl = null;
+                }
+                await _hotelRepository.UpdateAsync(hotel);
+                return RedirectToAction(nameof(Index));
+            }
+            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
+            var regions = await _regionRepository.GetAllAsync();
+            ViewBag.Regions = new SelectList(regions, "Id", "Name");
+            return View(hotel);
+        }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var region = await _hotelRepository.GetByIdAsync(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            return View(region);
+        }
+        // Xử lý xóa sản phẩm
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _hotelRepository.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
