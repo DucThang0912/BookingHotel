@@ -30,7 +30,7 @@
             <a id="manage" class="nav-link ml-2" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@UserManager.GetUserName(User)</a>
         </li>
         <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Region", new { area = "" })">
                 <button id="logout" type="submit" class="btn btn-light ml-2">Đăng xuất</button>
             </form>
         </li>

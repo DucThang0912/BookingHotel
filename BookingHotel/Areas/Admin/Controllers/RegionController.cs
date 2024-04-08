@@ -7,29 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace BookingHotel.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
-    public class HotelController : Controller
+    [Authorize (Roles = "Admin")]
+    public class RegionController : Controller
     {
-        private readonly IHotelRepository _hotelRepository;
         private readonly IRegionRepository _regionRepository;
-        
-        public HotelController(IHotelRepository hotelRepository, IRegionRepository regionRepository)
+        public RegionController(IRegionRepository regionRepository)
         {
-            _hotelRepository = hotelRepository;
             _regionRepository = regionRepository;
         }
+
         public async Task<IActionResult> Index()
         {
-            var hotels = await _hotelRepository.GetAllAsync();
-            foreach (var hotel in hotels)
-            {
-                if (hotel.RegionId != null)
-                {
-                    hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
-                }
-            }
-            return View(hotels);
+            var regions = await _regionRepository.GetAllAsync();
+            return View(regions);
         }
+
         public async Task<IActionResult> Add()
         {
             var regions = await _regionRepository.GetAllAsync();
@@ -38,40 +30,39 @@ namespace BookingHotel.Areas.Admin.Controllers
         }
         // Xử lý thêm sản phẩm mới
         [HttpPost]
-        public async Task<IActionResult> Add(Hotel hotel)
+        public async Task<IActionResult> Add(Region region)
         {
             if (ModelState.IsValid)
             {
-                await _hotelRepository.AddAsync(hotel);
+                await _regionRepository.AddAsync(region);
                 return RedirectToAction(nameof(Index));
             }
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             var regions = await _regionRepository.GetAllAsync();
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
-            return View(hotel);
+            return View(region);
         }
-
         [HttpPost, ActionName("AddImage")]
-        public async Task<IActionResult> Add(Hotel hotel, IFormFile? imageUrl, int regionId)
+        public async Task<IActionResult> Add(Region region, IFormFile? imageUrl, int regionId)
         {
             if (ModelState.IsValid)
             {
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
                     string imagePath = await SaveImage(imageUrl);
-                    hotel.ImageUrl = imagePath;
+                    region.ImageUrl = imagePath;
                 }
                 else
                 {
-                    hotel.ImageUrl = null;
+                    region.ImageUrl = null;
                 }
-                await _hotelRepository.AddAsync(hotel);
+                await _regionRepository.AddAsync(region);
                 return RedirectToAction(nameof(Index));
             }
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             var regions = await _regionRepository.GetAllAsync();
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
-            return View(hotel);
+            return View(region);
         }
         private async Task<string> SaveImage(IFormFile image)
         {
@@ -85,6 +76,38 @@ namespace BookingHotel.Areas.Admin.Controllers
 
             return "/images/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
-
+        public async Task<IActionResult> Update(int id)
+        {
+            var region = await _regionRepository.GetByIdAsync(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            var regions = await _regionRepository.GetAllAsync();
+            ViewBag.Regions = new SelectList(regions, "Id", "Name");
+            return View(region);
+        }
+        [HttpPost, ActionName("UpdateImage")]
+        public async Task<IActionResult> Update(Region region, IFormFile? imageUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                if (imageUrl != null && imageUrl.Length > 0)
+                {
+                    string imagePath = await SaveImage(imageUrl);
+                    region.ImageUrl = imagePath;
+                }
+                else
+                {
+                    region.ImageUrl = null;
+                }
+                await _regionRepository.UpdateAsync(region);
+                return RedirectToAction(nameof(Index));
+            }
+            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
+            var regions = await _regionRepository.GetAllAsync();
+            ViewBag.Regions = new SelectList(regions, "Id", "Name");
+            return View(region);
+        }
     }
 }

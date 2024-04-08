@@ -6,5 +6,8 @@ namespace BookingHotel.Repositories
     {
         Task<IEnumerable<Region>> GetAllAsync();
         Task<Region> GetByIdAsync(int id);
+        Task AddAsync(Region region);
+        Task UpdateAsync(Region region);
+        Task DeleteAsync(int id);
     }
 }

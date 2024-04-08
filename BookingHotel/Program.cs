@@ -41,16 +41,31 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+//---------------------
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
       name: "areas",
-      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+      pattern: "{area:exists}/{controller=Region}/{action=Index}/{id?}"
     );
 });
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Region}/{action=Index}/{id?}");
 
+//---------------------
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Region}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "admin",
+//    pattern: "{area:exists}/{controller=Admin}/{action=Index}"
+//);
+//app.MapControllerRoute(
+//          name: "admin",
+//          pattern: "{area:exists}/{controller=Region}/{action=Index}/{id?}"
+//);
+//-------------------------
 app.Run();

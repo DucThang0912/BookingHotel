@@ -21,5 +21,23 @@ namespace BookingHotel.Repositories
         {
             return await _context.Regions.FindAsync(id);
         }
+        public async Task AddAsync(Region region)
+        {
+            _context.Regions.Add(region);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Region region)
+        {
+            _context.Regions.Update(region);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var region = await _context.Regions.FindAsync(id);
+            _context.Regions.Remove(region);
+            await _context.SaveChangesAsync();
+        }
     }
 }

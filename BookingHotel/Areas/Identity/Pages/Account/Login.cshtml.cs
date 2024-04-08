@@ -117,9 +117,24 @@ namespace BookingHotel.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    //return LocalRedirect(returnUrl);
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if (user != null)
+                    {
+                        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                        if (isAdmin)
+                        {
+                            return Redirect("/Admin/Admin/Index");
+                        }
+                    }
                     return LocalRedirect(returnUrl);
                 }
-                if (result.RequiresTwoFactor)
+                //if (result.Succeeded)
+                //{
+                //    _logger.LogInformation("User logged in.");
+                //    return LocalRedirect(returnUrl);
+                //}
+                if (result.RequiresTwoFactor)   
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }

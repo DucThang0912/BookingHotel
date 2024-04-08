@@ -1,0 +1,19 @@
+﻿@model BookingHotel.Models.Hotel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Add Region";
+}
+<h2>Add Hotels</h2>
+<a asp-action="index">Return to home</a>
+<form asp-action="AddImage" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageUrl">Region Image</label>
+        <input type="file" asp-for="ImageUrl" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Add</button>
+</form>

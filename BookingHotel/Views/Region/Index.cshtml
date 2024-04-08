@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookingHotel.Models.Hotel>
+﻿@model IEnumerable<BookingHotel.Models.Region>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,19 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tìm chỗ nghỉ tiếp theo</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/tiny-slider.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         .search-container {
             background-color: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .hotel-list {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -31,20 +29,8 @@
         }
 
             .btn-search:hover {
+                color: white;
                 background-color: #0056b3;
-            }
-
-        .btn-primary,
-        .btn-secondary,
-        .btn-danger {
-            transition: background-color 0.3s ease;
-        }
-
-            .btn-primary:hover,
-            .btn-secondary:hover,
-            .btn-danger:hover {
-                background-color: #333;
-                color: #fff;
             }
 
         .table {
@@ -72,6 +58,29 @@
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
         }
+
+        .region-card {
+            position: relative;
+        }
+
+        .card-img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .region-title {
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
     </style>
 </head>
 <body>
@@ -104,19 +113,18 @@
             </div>
         </div>
     </div>
-    </div>
 
     <div class="container my-5">
-        <p class="text-center mb-4">Các lựa chọn phổ biến nhất cho du khách từ Việt Nam</p>
+        <h2 class="text-center mb-4">Các lựa chọn phổ biến nhất cho du khách từ Việt Nam</h2>
         <div class="row">
-            @foreach (var item in Model)
+            @foreach (var item in Model.Take(6))
             {
                 <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="@item.Region.ImageUrl" class="card-img-top" alt="@item.Region.Name">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Region.Name</h5>
+                    <div class="card region-card">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title region-title">@item.Name</h5>
                         </div>
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" height="270px">
                     </div>
                 </div>
             }
@@ -124,40 +132,7 @@
     </div>
 
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Hotel Name</th>
-                <th>Description</th>
-                <th>Address</th>
-                <th>Region</th>
-                <th>Image</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Description</td>
-                        <td>@item.Address</td>
-                        <td>@item.RegionId</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.ImageUrl))
-                            {
-                                <img src="@item.ImageUrl" alt="Hotel Image" class="img-fluid" style="max-width: 200px; max-height: 200px" />
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
