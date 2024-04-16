@@ -6,11 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BookingHotel.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateIdentity : Migration
+    public partial class BHotel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Amenities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Amenities", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -76,6 +90,21 @@ namespace BookingHotel.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RoomTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Services",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -258,7 +287,8 @@ namespace BookingHotel.Migrations
                     HotelId = table.Column<int>(type: "int", nullable: false),
                     RoomNumber = table.Column<int>(type: "int", nullable: false),
                     RoomTypeId = table.Column<int>(type: "int", nullable: false),
-                    PricePerNight = table.Column<long>(type: "bigint", nullable: false)
+                    PricePerNight = table.Column<long>(type: "bigint", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -278,12 +308,39 @@ namespace BookingHotel.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoomServices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HotelId = table.Column<int>(type: "int", nullable: true),
+                    ServiceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoomServices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoomServices_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "Hotels",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RoomServices_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoomId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsConfirmed = table.Column<bool>(type: "bit", nullable: false)
@@ -291,6 +348,12 @@ namespace BookingHotel.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Bookings_Rooms_RoomId",
                         column: x => x.RoomId,
@@ -300,23 +363,27 @@ namespace BookingHotel.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoomImages",
+                name: "RoomAmenities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: false)
+                    RoomId = table.Column<int>(type: "int", nullable: true),
+                    AmenityId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoomImages", x => x.Id);
+                    table.PrimaryKey("PK_RoomAmenities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoomImages_Rooms_RoomId",
+                        name: "FK_RoomAmenities_Amenities_AmenityId",
+                        column: x => x.AmenityId,
+                        principalTable: "Amenities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RoomAmenities_Rooms_RoomId",
                         column: x => x.RoomId,
                         principalTable: "Rooms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -364,6 +431,11 @@ namespace BookingHotel.Migrations
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HotelImages_HotelId",
                 table: "HotelImages",
                 column: "HotelId");
@@ -379,8 +451,13 @@ namespace BookingHotel.Migrations
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoomImages_RoomId",
-                table: "RoomImages",
+                name: "IX_RoomAmenities_AmenityId",
+                table: "RoomAmenities",
+                column: "AmenityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoomAmenities_RoomId",
+                table: "RoomAmenities",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
@@ -392,6 +469,16 @@ namespace BookingHotel.Migrations
                 name: "IX_Rooms_RoomTypeId",
                 table: "Rooms",
                 column: "RoomTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoomServices_HotelId",
+                table: "RoomServices",
+                column: "HotelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoomServices_ServiceId",
+                table: "RoomServices",
+                column: "ServiceId");
         }
 
         /// <inheritdoc />
@@ -422,7 +509,10 @@ namespace BookingHotel.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "RoomImages");
+                name: "RoomAmenities");
+
+            migrationBuilder.DropTable(
+                name: "RoomServices");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -431,7 +521,13 @@ namespace BookingHotel.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Amenities");
+
+            migrationBuilder.DropTable(
                 name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "Hotels");

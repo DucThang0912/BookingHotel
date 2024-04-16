@@ -7,7 +7,7 @@
         public Hotel? Hotel { get; set; }
         public string ReviewerName { get; set; }
         public string Comment { get; set; }
-        public int Rating { get; set; } // From 1 to 5
+        public int Rating { get; set; } 
     }
 }
 

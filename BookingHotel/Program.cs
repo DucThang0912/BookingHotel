@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BookingHotel.Repositories;
 using BookingHotel.Data;
 using Microsoft.AspNetCore.Identity;
+using BookingHotel.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

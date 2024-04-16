@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BookingHotel.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -15,9 +15,12 @@ namespace BookingHotel.Data
         public DbSet<Region> Regions { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
         public DbSet<HotelImage> HotelImages { get; set; }
-        public DbSet<RoomImage> RoomImages { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<RoomAmenity> RoomAmenities { get; set; }
+        public DbSet<HotelService> RoomServices { get; set; }
     }
 }
 

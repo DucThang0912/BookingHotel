@@ -10,9 +10,8 @@ namespace BookingHotel.Models
         public int RoomTypeId { get; set; }
         public RoomType? RoomType { get; set; }
         public long PricePerNight { get; set; }
-        public List<RoomImage>? Images { get; set; }
+        public string ImageUrl { get; set; }
         public ICollection<Booking>? Bookings { get; set; }
-        // Other properties
     }
 }
 

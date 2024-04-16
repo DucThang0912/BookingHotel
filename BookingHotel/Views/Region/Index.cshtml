@@ -346,7 +346,7 @@
                 </div>
             </div>
             <div class="search">
-                <input type="submit" value="SEARCH">
+                <input type="submit" value="Tìm">
             </div>
         </div>
     </section>
@@ -383,14 +383,15 @@
                 @foreach (var item in Model)
                 {
                     <div class="item">
-                        <img src="@item.ImageUrl" alt="@item.Name">
-                        <div class="overlay"></div> <!-- Thêm lớp overlay -->
-                        <div class="name-overlay">@item.Name</div> <!-- Thêm tên ở đây -->
+                        <a href="@Url.Action("Index", "Hotel", new { id = item.Id })">
+                            <img src="@item.ImageUrl" alt="@item.Name">
+                            <div class="overlay"></div>
+                            <div class="name-overlay">@item.Name</div>
+                        </a>
                     </div>
                 }
 
             </div>
-
         </div>
     </section>
 
