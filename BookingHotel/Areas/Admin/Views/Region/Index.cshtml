@@ -1,40 +1,91 @@
 ﻿@model IEnumerable<BookingHotel.Models.Region>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Region Index";
 }
 
-<p class="pt-3">
-    <a asp-action="Add" class="btn btn-primary">Add Region</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Region Name</th>
-            <th>Image</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Region List</h1>
+        <div>
+            <a asp-action="Add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Region
+            </a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search regions...">
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
         {
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>
+            <div class="col region-card" data-name="@item.Name.ToLower()">
+                <div class="card h-100">
+                    <div class="card-img-top">
                         @if (!string.IsNullOrEmpty(item.ImageUrl))
-                        {
-                            <img src="@item.ImageUrl" alt="Region Image" class="img-fluid" style="max-width: 200px; max-height: 200px" />
+                        {   
+                            <img src="@item.ImageUrl" alt="Region Image" class="card-img-top region-img">
                         }
-                    </td>
-                    <td>
-                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Update</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            }
+                        else
+                        {
+                            <div class="placeholder-img"></div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <div class="card-footer">
+                            <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const regionCards = document.querySelectorAll('.region-card');
+        const searchInput = document.getElementById('searchInput');
+
+        // Add hover effect to region cards
+        regionCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            regionCards.forEach(card => {
+                const regionName = card.dataset.name;
+                const containsTerm = regionName.includes(searchTerm);
+                card.style.display = containsTerm ? 'block' : 'none';
+            });
+        });
+    </script>
+}
+
+<style>
+    .region-img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .placeholder-img {
+        height: 200px;
+        background-color: #e9ecef;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BookingHotel.Models.Service>
+
+<h1>Add Services to Hotel</h1>
+
+<form id="addServiceForm" action="@Url.Action("AddServiceToHotel", new { id = ViewBag.HotelId })" method="post">
+    <div class="container my-5">
+        <div class="row mt-4">
+            @foreach (var service in Model)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card @((ViewBag.SelectedServices != null && ViewBag.SelectedServices.Contains(service.Id)) ? "border-success" : "")">
+                        <img src="@service.ImageUrl" class="card-img-top" alt="Service Image">
+                        <div class="card-body">
+                            <h5 class="card-title">@service.Name</h5>
+                            @{
+                                var btnText = (ViewBag.SelectedServices != null && ViewBag.SelectedServices.Contains(service.Id)) ? "Remove Service" : "Add Service";
+                                var btnClass = (ViewBag.SelectedServices != null && ViewBag.SelectedServices.Contains(service.Id)) ? "btn-danger" : "btn-primary";
+                            }
+                            <button type="button" class="btn @btnClass add-service-btn" data-service-id="@service.Id">@btnText</button>
+                        </div>
+                    </div>
+                </div>
+            }   
+        </div>
+    </div>
+    <input type="hidden" id="selectedServiceId" name="selectedServiceId" />
+    <input type="hidden" id="hotelId" name="hotelId" value="@ViewBag.HotelId" />
+    <button type="submit" class="btn btn-primary" style="display: none;">Save</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.add-service-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const serviceId = button.dataset.serviceId;
+                document.getElementById('selectedServiceId').value = serviceId;
+                document.getElementById('addServiceForm').submit();
+            });
+        });
+    </script>
+}

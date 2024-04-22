@@ -1,11 +1,11 @@
-﻿@model BookingHotel.Models.Hotel
+﻿@model BookingHotel.Models.Region
 @using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Add Region";
 }
-<h2 class="pmt-3">Add Hotels</h2>
+<h2 class="pmt-3">Add Region</h2>
 <a asp-action="index">Return to home</a>
-<form asp-action="AddImage" method="post" enctype="multipart/form-data">
+<form asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />

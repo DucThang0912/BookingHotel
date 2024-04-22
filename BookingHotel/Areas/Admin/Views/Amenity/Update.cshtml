@@ -1,0 +1,22 @@
+﻿@model BookingHotel.Models.Amenity
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Update Amenity";
+}
+<h2 class="pt-3">Update Amenity</h2>
+<a asp-action="index">Return to home</a>
+<form asp-action="Update" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageUrl">Service Image</label>
+        <input type="file" asp-for="ImageUrl" class="form-control" />
+        <img src="@Model.ImageUrl" alt="Region Image" style="max-width: 200px;" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>

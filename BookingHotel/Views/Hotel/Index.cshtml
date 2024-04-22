@@ -103,11 +103,11 @@
                 </div>
                 <div class="box">
                     <label>Người lớn:</label> <br>
-                    <input type="number" placeholder="0">
+                    <input type="number" placeholder="0" min="0">
                 </div>
                 <div class="box">
                     <label>Trẻ em:</label> <br>
-                    <input type="number" placeholder="0">
+                    <input type="number" placeholder="0" min="0">
                 </div>
             </div>
             <div class="search">
@@ -142,7 +142,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">@item.Name</h5>
                                     <p class="card-text">@item.Address</p>
-                                    <a href="@Url.Action("Detail", "Hotel", new { id = item.Id })" class="btn btn-primary btn-details">Xem chi tiết</a>
+                                    <a class="btn btn-primary btn-details" asp-area="" asp-controller="Hotel" asp-action="Detail">Xem chi tiết</a>
                                 </div>
                             </div>
                         </div>

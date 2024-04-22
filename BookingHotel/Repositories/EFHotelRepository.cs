@@ -37,8 +37,8 @@ namespace BookingHotel.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            var product = await _context.Hotels.FindAsync(id);
-            _context.Hotels.Remove(product);
+            var hotel = await _context.Hotels.FindAsync(id);
+            _context.Hotels.Remove(hotel);
             await _context.SaveChangesAsync();
         }
     }

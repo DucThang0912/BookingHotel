@@ -20,7 +20,7 @@ namespace BookingHotel.Data
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<RoomAmenity> RoomAmenities { get; set; }
-        public DbSet<HotelService> RoomServices { get; set; }
+        public DbSet<HotelService> HotelServices { get; set; }
     }
 }
 

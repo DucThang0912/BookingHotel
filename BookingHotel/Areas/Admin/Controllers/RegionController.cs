@@ -30,19 +30,6 @@ namespace BookingHotel.Areas.Admin.Controllers
         }
         // Xử lý thêm sản phẩm mới
         [HttpPost]
-        public async Task<IActionResult> Add(Region region)
-        {
-            if (ModelState.IsValid)
-            {
-                await _regionRepository.AddAsync(region);
-                return RedirectToAction(nameof(Index));
-            }
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
-            var regions = await _regionRepository.GetAllAsync();
-            ViewBag.Regions = new SelectList(regions, "Id", "Name");
-            return View(region);
-        }
-        [HttpPost, ActionName("AddImage")]
         public async Task<IActionResult> Add(Region region, IFormFile? imageUrl, int regionId)
         {
             if (ModelState.IsValid)
@@ -67,14 +54,14 @@ namespace BookingHotel.Areas.Admin.Controllers
         private async Task<string> SaveImage(IFormFile image)
         {
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            var filePath = Path.Combine("wwwroot/images", fileName); // Đường dẫn lưu trữ hình ảnh trên máy chủ
+            var filePath = Path.Combine("wwwroot/images/regions", fileName); // Đường dẫn lưu trữ hình ảnh trên máy chủ
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await image.CopyToAsync(fileStream);
             }
 
-            return "/images/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
+            return "/images/regions/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
         public async Task<IActionResult> Update(int id)
         {

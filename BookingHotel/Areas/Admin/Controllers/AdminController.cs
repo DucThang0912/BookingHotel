@@ -9,9 +9,9 @@ namespace BookingHotel.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        //private readonly UserManager<IdentityUser> _userManager;
-        //private readonly RoleManager<IdentityUser> _roleManager;
-        //public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityUser> roleManager)
+        //private readonly UserManager<ApplicationUser> _userManager;
+        //private readonly RoleManager<ApplicationUser> _roleManager;
+        //public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationUser> roleManager)
         //{
         //    _userManager = userManager;
         //    _roleManager = roleManager;

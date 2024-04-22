@@ -1,0 +1,8 @@
+﻿@model BookingHotel.Models.Service
+<h2 class="pt-3">Delete Service</h2>
+<a asp-action="index">Return to home</a>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <p>Bạn có chắc muốn xoá @Model.Name?</p>
+    <button type="submit" class="btn btn-danger mt-3">Xoá</button>
+</form>

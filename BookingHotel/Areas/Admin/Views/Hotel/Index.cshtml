@@ -4,44 +4,103 @@
     ViewData["Title"] = "Index";
 }
 
-<p class="pt-3">
-    <a asp-action="Add" class="btn btn-primary">Add Hotel</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Hotel Name</th>
-            <th>Description</th>
-            <th>Address</th>
-            <th>Region</th>
-            <th>Image</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Hotel List</h1>
+        <div>
+            <a asp-action="Add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Hotel
+            </a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search hotels...">
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="hotelList">
+        @foreach (var item in Model)
         {
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Description</td>
-                    <td>@item.Address</td>
-                    <td>@item.RegionId</td>
-                    <td>
+            <div class="col hotel-card" data-name="@item.Name.ToLower()">
+                <div class="card h-100">
+                    <div class="card-img-top">
                         @if (!string.IsNullOrEmpty(item.ImageUrl))
                         {
-                            <img src="@item.ImageUrl" alt="Hotel Image" class="img-fluid" style="max-width: 200px; max-height: 200px" />
+                            <img src="@item.ImageUrl" alt="Hotel Image" class="card-img-top hotel-img">
                         }
-                    </td>
-                    <td>
+                        else
+                        {
+                            <div class="placeholder-img"></div>
+                        }
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" onclick="viewHotelDetails('@item.Id')">@item.Name</h5>
+                        <p class="card-text flex-grow-1">@(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</p>
+                        <p class="card-text"><small class="text-muted">@item.Address, @item.Region.Name</small></p>
+                    </div>
+                    <div class="card-footer">
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">View</a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
+                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            }
+                        <a asp-action="Index" asp-controller="Room" asp-route-hotelId="@item.Id" class="btn btn-success btn-sm">Room</a>
+                        <a asp-action="AddServicesToHotel" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Service</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-4" id="pagination">
+            <!-- Pagination links will be dynamically added here -->
+        </ul>
+    </nav>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        const hotelCards = document.querySelectorAll('.hotel-card');
+        const searchInput = document.getElementById('searchInput');
+
+        // Add hover effect to hotel cards
+        hotelCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            hotelCards.forEach(card => {
+                const hotelName = card.dataset.name;
+                const containsTerm = hotelName.includes(searchTerm);
+                card.style.display = containsTerm ? 'block' : 'none';
+            });
+        });
+    </script>
+}
+
+<style>
+    .hotel-img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .placeholder-img {
+        height: 200px;
+        background-color: #e9ecef;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-text {
+        flex-grow: 1;
+    }
+</style>

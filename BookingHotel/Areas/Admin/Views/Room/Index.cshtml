@@ -1,0 +1,38 @@
+﻿@model IEnumerable<BookingHotel.Models.Room>
+
+@{
+    ViewData["Title"] = "Room List";
+}
+
+<h2>Room List</h2>
+
+<p>
+    <a asp-action="Add" asp-controller="Room" asp-route-hotelId="@ViewData["HotelId"]" class="btn btn-primary">Add Room</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room Number</th>
+            <th>Room Type</th>
+            <th>Price Per Night</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td>@room.RoomNumber</td>
+                <td>@room.RoomType.Description</td>
+                <td>@room.PricePerNight</td>
+                <td>@(room.IsAvailable == true ? "Yes" : "No")</td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@room.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@room.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

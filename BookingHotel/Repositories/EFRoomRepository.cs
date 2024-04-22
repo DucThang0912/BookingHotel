@@ -1,6 +1,9 @@
 ﻿using BookingHotel.Data;
 using BookingHotel.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookingHotel.Repositories
 {
@@ -12,6 +15,7 @@ namespace BookingHotel.Repositories
         {
             _context = context;
         }
+
         public async Task<IEnumerable<Room>> GetAllAsync()
         {
             return await _context.Rooms.ToListAsync();
@@ -20,6 +24,29 @@ namespace BookingHotel.Repositories
         public async Task<Room> GetByIdAsync(int id)
         {
             return await _context.Rooms.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int id)
+        {
+            return await _context.Rooms.Where(r => r.HotelId == id).ToListAsync();
+        }
+        public async Task AddAsync(Room room)
+        {
+            _context.Rooms.Add(room);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Room room)
+        {
+            _context.Rooms.Update(room);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var room = await _context.Rooms.FindAsync(id);
+            _context.Rooms.Remove(room);
+            await _context.SaveChangesAsync();
         }
     }
 }

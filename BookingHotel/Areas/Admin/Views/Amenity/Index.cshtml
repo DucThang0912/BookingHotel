@@ -1,0 +1,91 @@
+﻿@model IEnumerable<BookingHotel.Models.Amenity>
+
+@{
+    ViewData["Title"] = "Amenity Index";
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Amenity List</h1>
+        <div>
+            <a asp-action="Add" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Amenity
+            </a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search amenities...">
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col amenity-card" data-name="@item.Name.ToLower()">
+                <div class="card h-100">
+                    <div class="card-img-top">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="Amenity Image" class="card-img-top amenity-img">
+                        }
+                        else
+                        {
+                            <div class="placeholder-img"></div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <div class="card-footer">
+                            <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const amenityCards = document.querySelectorAll('.amenity-card');
+        const searchInput = document.getElementById('searchInput');
+
+        // Add hover effect to amenity cards
+        amenityCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            amenityCards.forEach(card => {
+                const amenityName = card.dataset.name;
+                const containsTerm = amenityName.includes(searchTerm);
+                card.style.display = containsTerm ? 'block' : 'none';
+            });
+        });
+    </script>
+}
+
+<style>
+    .amenity-img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .placeholder-img {
+        height: 200px;
+        background-color: #e9ecef;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

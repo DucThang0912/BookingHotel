@@ -11,15 +11,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddDefaultTokenProviders()
-    .AddDefaultUI()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+
+})
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IHotelRepository, EFHotelRepository>();
 builder.Services.AddScoped<IRoomRepository, EFRoomRepository>();
 builder.Services.AddScoped<IRegionRepository, EFRegionRepository>();
+builder.Services.AddScoped<IRoomTypeRepository, EFRoomTypeRepository>();
+builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();
+builder.Services.AddScoped<IAmenityRepository, EFAmenityRepository>();
+builder.Services.AddScoped<IHotelServiceRepository, EFHotelServiceRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
