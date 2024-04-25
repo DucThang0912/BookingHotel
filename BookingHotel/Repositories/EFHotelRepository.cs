@@ -41,5 +41,20 @@ namespace BookingHotel.Repositories
             _context.Hotels.Remove(hotel);
             await _context.SaveChangesAsync();
         }
+        public async Task AddHotelImageAsync(HotelImage hotelImage)
+        {
+            _context.HotelImages.Add(hotelImage);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<List<HotelImage>> GetHotelImagesAsync(int hotelId)
+        {
+            return await _context.HotelImages.Where(hi => hi.HotelId == hotelId).ToListAsync();
+        }
+        public void RemoveHotelImages(int hotelId)
+        {
+            var hotelImages = _context.HotelImages.Where(hi => hi.HotelId == hotelId);
+            _context.HotelImages.RemoveRange(hotelImages);
+            _context.SaveChanges();
+        }
     }
 }

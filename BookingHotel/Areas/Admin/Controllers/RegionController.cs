@@ -79,6 +79,7 @@ namespace BookingHotel.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingRegion = await _regionRepository.GetByIdAsync(region.Id);
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
                     string imagePath = await SaveImage(imageUrl);
@@ -86,7 +87,7 @@ namespace BookingHotel.Areas.Admin.Controllers
                 }
                 else
                 {
-                    region.ImageUrl = null;
+                    region.ImageUrl = existingRegion.ImageUrl;
                 }
                 await _regionRepository.UpdateAsync(region);
                 return RedirectToAction(nameof(Index));

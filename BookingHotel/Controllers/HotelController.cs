@@ -20,15 +20,20 @@ namespace BookingHotel.Controllers
         public async Task<IActionResult> Index()
         {
             var hotels = await _hotelRepository.GetAllAsync();
-            foreach (var hotel in hotels)
-            {
-                if (hotel.RegionId != null)
-                {
-                    hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
-                }
-            }
+            //foreach (var hotel in hotels)
+            //{
+            //    if (hotel.RegionId != null)
+            //    {
+            //        hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
+            //    }
+            //}
             return View(hotels);
         }
-        
+        public async Task<IActionResult> Display(int id)
+        {
+            var hotel = await _hotelRepository.GetByIdAsync(id);
+
+            return View(hotel);
+        }
     }
 }

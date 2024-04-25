@@ -3,6 +3,7 @@ using BookingHotel.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Drawing;
 
 namespace BookingHotel.Areas.Admin.Controllers
 {
@@ -72,6 +73,7 @@ namespace BookingHotel.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingService = await _serviceRepository.GetByIdAsync(service.Id);
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
                     string imagePath = await SaveImage(imageUrl);
@@ -79,7 +81,7 @@ namespace BookingHotel.Areas.Admin.Controllers
                 }
                 else
                 {
-                    service.ImageUrl = null;
+                    service.ImageUrl = existingService.ImageUrl;
                 }
                 await _serviceRepository.UpdateAsync(service);
                 return RedirectToAction(nameof(Index));

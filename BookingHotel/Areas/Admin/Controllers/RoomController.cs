@@ -13,11 +13,15 @@ namespace BookingHotel.Areas.Admin.Controllers
     {
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomTypeRepository _roomTypeRepository;
+        private readonly IAmenityRepository _amenityRepository;
+        private readonly IRoomAmenityRepository _roomAmenityRepository;
 
-        public RoomController(IRoomRepository roomRepository, IRoomTypeRepository roomTypeRepository)
+        public RoomController(IRoomRepository roomRepository, IRoomTypeRepository roomTypeRepository, IRoomAmenityRepository roomAmenityRepository, IAmenityRepository amenityRepository)
         {
             _roomRepository = roomRepository;
             _roomTypeRepository = roomTypeRepository;
+            _roomAmenityRepository = roomAmenityRepository;
+            _amenityRepository = amenityRepository;
         }
 
         public async Task<IActionResult> Index(int hotelId)
@@ -89,6 +93,51 @@ namespace BookingHotel.Areas.Admin.Controllers
 
             await _roomRepository.DeleteAsync(id);
             return RedirectToAction("Index", new { hotelId = room.HotelId });
+        }
+        public async Task<IActionResult> AddAmenitiesToRoom(int id)
+        {
+            var amenities = await _amenityRepository.GetAllAsync();
+
+            var selectedAmenities = await _roomAmenityRepository.GetAmenitiesByRoomIdAsync(id);
+
+            ViewBag.RoomId = id;
+
+            if (selectedAmenities == null || !selectedAmenities.Any())
+            {
+                ViewBag.Amenities = amenities;
+                return View(amenities);
+            }
+
+            ViewBag.SelectedAmenities = selectedAmenities;
+            return View(amenities);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddAmenityToRoom(int selectedAmenityId, int id)
+        {
+            if (selectedAmenityId == 0)
+            {
+                return BadRequest("No amenity selected.");
+            }
+
+            var existingAmenity = await _roomAmenityRepository.GetAmenityByRoomIdAndAmenityIdAsync(id, selectedAmenityId);
+            if (existingAmenity != null)
+            {
+                // Nếu đã tồn tại, xóa dịch vụ
+                await _roomAmenityRepository.DeleteAsync(id, selectedAmenityId);
+            }
+            else
+            {
+                var roomAmenity = new RoomAmenity
+                {
+                    RoomId = id,
+                    AmenityId = selectedAmenityId
+                };
+
+                await _roomAmenityRepository.AddAsync(roomAmenity);
+            }
+            return RedirectToAction("AddAmenitiesToRoom", new { id = id });
         }
     }
 }

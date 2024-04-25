@@ -29,5 +29,9 @@
         <label asp-for="ImageUrl">Hotel Image</label>
         <input type="file" asp-for="ImageUrl" class="form-control" />
     </div>
+    <div class="form-group">
+        <label>Additional Images</label>
+        <input type="file" name="additionalImages" multiple class="form-control" />
+    </div>
     <button type="submit" class="btn btn-primary mt-3">Add</button>
 </form>

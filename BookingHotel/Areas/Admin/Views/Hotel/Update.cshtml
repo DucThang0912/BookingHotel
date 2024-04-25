@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Update Hotel";
 }
-<h2>Edit Product</h2>
+<h2>Edit Hotel</h2>
 <a asp-action="index">Return to home</a>
 <form asp-action="Update" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Id" />
@@ -29,9 +29,31 @@
                 class="form-control"></select>
     </div>
     <div class="form-group">
-        <label asp-for="ImageUrl">Product Image</label>
+        <label asp-for="ImageUrl">Hotel Image</label>
         <input type="file" asp-for="ImageUrl" class="form-control" />
         <img src="@Model.ImageUrl" alt="Product Image" style="max-width: 200px;" />
+    </div>
+    <div class="form-group">
+        <label>Existing Images</label>
+        @if (Model.Images != null && Model.Images.Any())
+        {
+            foreach (var image in Model.Images)
+            {
+                <div>
+                    <img src="@image.ImageUrl" alt="Hotel Image" style="max-width: 200px;" />
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteImage('@image.Id')">Delete</button>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No images found.</p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Upload New Images</label>
+        <input type="file" name="newImages" multiple class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
 </form>

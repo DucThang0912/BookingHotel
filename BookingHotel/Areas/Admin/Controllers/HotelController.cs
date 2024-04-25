@@ -1,8 +1,10 @@
-﻿using BookingHotel.Models;
+﻿using BookingHotel.Data;
+using BookingHotel.Models;
 using BookingHotel.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookingHotel.Areas.Admin.Controllers
 {
@@ -14,9 +16,10 @@ namespace BookingHotel.Areas.Admin.Controllers
         private readonly IRegionRepository _regionRepository;
         private readonly IServiceRepository _serviceRepository;
         private readonly IHotelServiceRepository _hotelServiceRepository;
-        
-        public HotelController(IHotelRepository hotelRepository, IRegionRepository regionRepository, IServiceRepository serviceRepository, IHotelServiceRepository hotelServiceRepository)
+        private readonly ApplicationDbContext _context;
+        public HotelController(ApplicationDbContext context, IHotelRepository hotelRepository, IRegionRepository regionRepository, IServiceRepository serviceRepository, IHotelServiceRepository hotelServiceRepository)
         {
+            _context = context;
             _hotelRepository = hotelRepository;
             _regionRepository = regionRepository;
             _serviceRepository = serviceRepository;
@@ -41,7 +44,7 @@ namespace BookingHotel.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Add(Hotel hotel, IFormFile? imageUrl, int regionId)
+        public async Task<IActionResult> Add(Hotel hotel, IFormFile? imageUrl, IEnumerable<IFormFile>? additionalImages, int regionId)
         {
             if (ModelState.IsValid)
             {
@@ -54,9 +57,17 @@ namespace BookingHotel.Areas.Admin.Controllers
                 {
                     hotel.ImageUrl = null;
                 }
+
                 await _hotelRepository.AddAsync(hotel);
+
+                if (additionalImages != null)
+                {
+                    await SaveAdditionalImages(hotel.Id, additionalImages);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             var regions = await _regionRepository.GetAllAsync();
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
@@ -74,6 +85,23 @@ namespace BookingHotel.Areas.Admin.Controllers
 
             return "/images/hotels/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
+        private async Task SaveAdditionalImages(int hotelId, IEnumerable<IFormFile> additionalImages)
+        {
+            foreach (var image in additionalImages)
+            {
+                if (image.Length > 0)
+                {
+                    string imagePath = await SaveImage(image);
+                    var hotelImage = new HotelImage
+                    {
+                        ImageUrl = imagePath,
+                        HotelId = hotelId
+                    };
+
+                    await _hotelRepository.AddHotelImageAsync(hotelImage);
+                }
+            }
+        }
         public async Task<IActionResult> Update(int id)
         {
             var hotel = await _hotelRepository.GetByIdAsync(id);
@@ -81,27 +109,46 @@ namespace BookingHotel.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            // Retrieve the list of HotelImage objects
+            hotel.Images = await _hotelRepository.GetHotelImagesAsync(id);
+
             var regions = await _regionRepository.GetAllAsync();
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
             return View(hotel);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Hotel hotel, IFormFile? imageUrl)
+        public async Task<IActionResult> Update(Hotel hotel, IFormFile? imageUrl, IEnumerable<IFormFile>? newImages)
         {
             if (ModelState.IsValid)
             {
+                var existingHotel = await _context.Hotels.Include(h => h.Images).FirstOrDefaultAsync(h => h.Id == hotel.Id);
+
+                if (existingHotel == null)
+                {
+                    return NotFound();
+                }
+
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
                     string imagePath = await SaveImage(imageUrl);
-                    hotel.ImageUrl = imagePath;
+                    existingHotel.ImageUrl = imagePath;
                 }
-                else
+
+                // Xóa ảnh cũ trong HotelImage trước khi thêm mới
+                _context.HotelImages.RemoveRange(existingHotel.Images);
+
+                if (newImages != null)
                 {
-                    hotel.ImageUrl = null;
+                    await SaveAdditionalImages(existingHotel.Id, newImages);
                 }
-                await _hotelRepository.UpdateAsync(hotel);
+
+                _context.Hotels.Update(existingHotel);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             var regions = await _regionRepository.GetAllAsync();
             ViewBag.Regions = new SelectList(regions, "Id", "Name");
@@ -127,23 +174,18 @@ namespace BookingHotel.Areas.Admin.Controllers
 
         public async Task<IActionResult> AddServicesToHotel(int id)
         {
-            // Lấy danh sách dịch vụ từ repository
             var services = await _serviceRepository.GetAllAsync();
 
-            // Lấy danh sách dịch vụ đã được chọn của khách sạn
             var selectedServices = await _hotelServiceRepository.GetServicesByHotelIdAsync(id);
 
-            // Truyền giá trị HotelId vào ViewBag
             ViewBag.HotelId = id;
 
-            // Nếu không có dữ liệu trong danh sách đã chọn, chỉ hiển thị danh sách dịch vụ
             if (selectedServices == null || !selectedServices.Any())
             {
                 ViewBag.Services = services;
                 return View(services);
             }
 
-            // Nếu có dữ liệu, truyền cả danh sách đã chọn vào view
             ViewBag.SelectedServices = selectedServices;
 
             return View(services);
@@ -155,11 +197,9 @@ namespace BookingHotel.Areas.Admin.Controllers
         {
             if (selectedServiceId == 0)
             {
-                // Trả về một thông báo lỗi nếu không có dịch vụ nào được chọn
                 return BadRequest("No service selected.");
             }
 
-            // Kiểm tra xem dịch vụ đã tồn tại cho khách sạn hay chưa
             var existingService = await _hotelServiceRepository.GetServiceByHotelIdAndServiceIdAsync(id, selectedServiceId);
             if (existingService != null)
             {
@@ -168,7 +208,6 @@ namespace BookingHotel.Areas.Admin.Controllers
             }
             else
             {
-                // Nếu chưa tồn tại, thêm dịch vụ mới
                 var hotelService = new HotelService
                 {
                     HotelId = id,
@@ -177,11 +216,7 @@ namespace BookingHotel.Areas.Admin.Controllers
 
                 await _hotelServiceRepository.AddAsync(hotelService);
             }
-
-            // Chuyển hướng người dùng về trang AddServicesToHotel sau khi thực hiện thành công
             return RedirectToAction("AddServicesToHotel", new { id = id });
         }
-
-
     }
 }

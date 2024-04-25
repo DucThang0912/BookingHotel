@@ -1,0 +1,97 @@
+﻿@model BookingHotel.Models.Hotel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Name - Booking Hotel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotel-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .hotel-header h1 {
+                margin-top: 0;
+                font-size: 36px;
+                color: #333;
+            }
+
+        .hotel-location {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .hotel-location p {
+                margin: 0;
+                color: #666;
+            }
+
+        .hotel-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 10px;
+            margin-top: 20px;
+        }
+
+            .image-gallery img {
+                width: 100%;
+                border-radius: 8px;
+            }
+
+        .no-images {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hotel-header">
+            <h1>@Model.Name</h1>
+        </div>
+        <div class="hotel-location">
+            <p>@Model.Address, @Model.Region.Name</p>
+        </div>
+        <img class="hotel-image" src="@Model.ImageUrl" alt="Hotel Image">
+        @if (Model.Images != null && Model.Images.Any())
+        {
+            <div class="image-gallery">
+                @foreach (var image in Model.Images)
+                {
+                    <img src="@image.ImageUrl" alt="Hotel Image">
+                }
+            </div>
+        }
+        else
+        {
+            <p class="no-images">No images available.</p>
+        }
+        <!-- Add more hotel information here as needed -->
+    </div>
+</body>
+</html>

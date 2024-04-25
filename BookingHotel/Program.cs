@@ -28,6 +28,7 @@ builder.Services.AddScoped<IRoomTypeRepository, EFRoomTypeRepository>();
 builder.Services.AddScoped<IServiceRepository, EFServiceRepository>();
 builder.Services.AddScoped<IAmenityRepository, EFAmenityRepository>();
 builder.Services.AddScoped<IHotelServiceRepository, EFHotelServiceRepository>();
+builder.Services.AddScoped<IRoomAmenityRepository, EFRoomAmenityRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
