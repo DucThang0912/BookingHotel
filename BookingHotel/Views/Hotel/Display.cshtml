@@ -5,93 +5,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@Model.Name - Booking Hotel</title>
+    <title>@Model.Name - Hotel Gallery</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .hotel-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-            .hotel-header h1 {
-                margin-top: 0;
-                font-size: 36px;
-                color: #333;
-            }
-
-        .hotel-location {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-            .hotel-location p {
-                margin: 0;
-                color: #666;
-            }
-
-        .hotel-image {
+        /*MenuGroup*/
+        .menuGroup {
             width: 100%;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
         }
 
-        .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            grid-gap: 10px;
-            margin-top: 20px;
-        }
-
-            .image-gallery img {
-                width: 100%;
-                border-radius: 8px;
+            .menuGroup th {
+                padding: 10px 20px; /* Khoảng cách giữa chữ và viền của mỗi ô */
+                text-align: center; /* Căn giữa nội dung trong ô */
             }
 
-        .no-images {
-            text-align: center;
-            color: #666;
+                .menuGroup th a {
+                    position: relative;
+                    text-decoration: none;
+                    color: #333;
+                    font-weight: bold;
+                    transition: color 0.3s;
+                }
+
+                    .menuGroup th a::after {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        bottom: -5px; /* Điều chỉnh khoảng cách giữa gạch và chữ */
+                        width: 100%;
+                        height: 3px; /* Độ dài của gạch */
+                        border-radius: 2px;
+                        background-color: #008080; /* Màu của gạch */
+                        transition: width 0.3s;
+                        transform: scaleX(0); /* Ẩn gạch ban đầu */
+                    }
+
+                    .menuGroup th a:hover::after,
+                    .menuGroup th a:focus::after {
+                        transform: scaleX(1); /* Hiển thị gạch khi hover hoặc focus */
+                    }
+
+        .horizontal-line {
+            height: 2px; /* Chiều cao của thanh ngang */
+            background-color: #ccc; /* Màu sắc của thanh ngang */
+            margin-bottom: 10px; /* Khoảng cách giữa thanh ngang và phần tử phía dưới */
         }
+
+        /*Image Hotel*/
+        .image-gallery-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            max-width: 1200px;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-image-container {
+            flex: 1;
+            width: 40%;
+            height: 310px;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+
+        .sub-image-container {
+            flex: 1;
+            width: 60%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .sub-image {
+            width: 100%;
+            height: 150px;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+        /* CSS styles for modal box and backdrop */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 70%;
+            height: 80%;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            width: 90%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close {
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: transparent;
+            border: 1px solid black;
+            border-radius: 2px;
+        }
+
+            .close:hover {
+                background-color: red;
+                color: white;
+            }
+
+        .modal-image {
+            width: 30%;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .modal-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /*Room Hotel*/
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="hotel-header">
-            <h1>@Model.Name</h1>
-        </div>
-        <div class="hotel-location">
-            <p>@Model.Address, @Model.Region.Name</p>
-        </div>
-        <img class="hotel-image" src="@Model.ImageUrl" alt="Hotel Image">
-        @if (Model.Images != null && Model.Images.Any())
-        {
-            <div class="image-gallery">
-                @foreach (var image in Model.Images)
-                {
-                    <img src="@image.ImageUrl" alt="Hotel Image">
-                }
-            </div>
-        }
-        else
-        {
-            <p class="no-images">No images available.</p>
-        }
-        <!-- Add more hotel information here as needed -->
+    <!-- Menu Group -->
+    <div class="navbar_menuGroup border border-light-subtle p-2 mt-4">
+        <table class="menuGroup">
+            <thead>
+                <tr>
+                    <th><a href="#">Tổng quan</a></th>
+                    <th><a href="#">Phòng nghỉ</a></th>
+                    <th><a href="#">Tiện nghi</a></th>
+                    <th><a href="#">Đánh giá</a></th>
+                </tr>
+            </thead>
+        </table>
     </div>
+
+    <!--OverView-->
+    <div class="overView mt-4 d-flex">
+        <div class="col-sm-6 col-md-8 border border-light-subtle p-3">
+            <h2>@Model.Name</h2>
+            <p><a href="https://www.google.com/maps/search/?api=1&query=@Model.Name" target="_blank">@Model.Address</a></p>
+            <div class="horizontal-line"></div>
+            <div>@Model.Description</div>
+        </div>
+        <div class="col-sm-6 col-md-4 border border-light-subtle p-3">
+            <iframe width="100%"
+                    height="300"
+                    frameborder="0"
+                    style="border: 0"
+                    src="https://maps.google.com/maps?q=@Model.Name&output=embed"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!--Image Hotel-->
+    <div class="image-gallery-container">
+        <div class="main-image-container">
+            <img class="main-image" src="@Model.ImageUrl" alt="Main Image" onclick="openModal()">
+        </div>
+        <div class="sub-image-container">
+            @if (Model.Images != null)
+            {
+                foreach (var image in Model.Images.Take(6))
+                {
+                    <img class="sub-image" src="@image.ImageUrl" alt="Sub Image" onclick="openModal()">
+                }
+            }
+            else
+            {
+                <p>No images available.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Modal Box -->
+    <div id="myModal" class="modal">
+        <div class="modal-close">
+            <div class="close" onmouseover="highlightCloseIcon(this)" onmouseout="unhighlightCloseIcon(this)" onclick="closeModal()">X</div>
+        </div>
+        <div class="row">
+            <!-- Dùng vòng foreach để lặp ảnh -->
+            @if (Model.Images != null)
+            {
+                int count = 0;
+                foreach (var image in Model.Images)
+                {
+                    <div class="col">
+                        <img class="modal-image" src="@image.ImageUrl" alt="Modal Image">
+                    </div>
+                    @* @if (++count % 4 == 0)
+            {
+            @:</div><div class="row">
+            } *@
+                }
+            }
+            else
+            {
+                <p>No images available.</p>
+            }
+        </div>
+    </div>
+    <div id="modalBackdrop" class="modal-backdrop"></div>
+
+    <!--Room Hotel-->
+    <div class="roomHotel">
+        <h2>Các phòng trống tại @Model.Name</h2>
+        <div class="rooms row justify-content-center">
+            @foreach (var room in Model.Rooms)
+            {
+                <div class="col-5 border border-light-subtle m-1 p-3 d-flex">
+                    <div>
+                        @if (room.IsAvailable == false)
+                        {
+                            <h3>Phòng số: @room.RoomNumber</h3>
+                            <p><strong>Giá mỗi đêm:</strong> @room.PricePerNight</p>
+                            <p>
+                                <span style="color: green;">Có sẵn</span>
+                            </p>
+                        }
+                    </div>
+                    <button class="ml-auto bg-blue text-light">Đặt phòng</button>
+                </div>
+            }
+        </div>
+
+
+    </div>
+
+    <script>
+        // JavaScript function to open the modal
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+            document.getElementById("modalBackdrop").style.display = "block";
+        }
+
+        // JavaScript function to close the modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            document.getElementById("modalBackdrop").style.display = "none";
+        }
+        function highlightCloseIcon(element) {
+            element.style.backgroundColor = "red";
+        }
+
+        function unhighlightCloseIcon(element) {
+            element.style.backgroundColor = "transparent";
+        }
+
+    </script>
 </body>
 </html>

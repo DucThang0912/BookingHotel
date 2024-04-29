@@ -21,6 +21,7 @@
         <input asp-for="PricePerNight" class="form-control" />
         <span asp-validation-for="PricePerNight" class="text-danger"></span>
     </div>
+    <input type="hidden" asp-for="IsAvailable" value="false" />
     <input type="hidden" asp-for="HotelId" value="@ViewBag.HotelId" />
     <button type="submit" class="btn btn-primary mt-3">Add</button>
 </form>
