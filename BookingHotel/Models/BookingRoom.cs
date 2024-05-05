@@ -7,8 +7,10 @@
         public Booking? Booking { get; set; }
         public int RoomId { get; set; }
         public Room? Room { get; set; }
+        public int Adults { get; set; }
+        public int Children { get; set; }
+        public DateTime CheckInDate { get; set; }
+        public DateTime CheckOutDate { get; set; }
         public decimal Total { get; set; }
-        public DateTime? CheckInDate { get; set; }
-        public DateTime? CheckOutDate { get; set; }
     }
 }

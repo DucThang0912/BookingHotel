@@ -26,9 +26,16 @@ namespace BookingHotel.Repositories
             return await _context.Rooms.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int id)
+        public async Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int hotelId, bool includeRoomType = false)
         {
-            return await _context.Rooms.Where(r => r.HotelId == id).ToListAsync();
+            IQueryable<Room> query = _context.Rooms.Where(r => r.HotelId == hotelId);
+
+            if (includeRoomType)
+            {
+                query = query.Include(r => r.RoomType);
+            }
+
+            return await query.ToListAsync();
         }
         public async Task AddAsync(Room room)
         {

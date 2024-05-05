@@ -37,23 +37,14 @@ namespace BookingHotel.Controllers
             var hotel = await _hotelRepository.GetByIdAsync(id);
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(id);
 
-            // Lấy danh sách phòng và thông tin RoomType của mỗi phòng
-            var rooms = await _roomRepository.GetRoomsByHotelIdAsync(id);
-
-            // Sử dụng LINQ để kết hợp thông tin Room và RoomType
-            var roomsWithRoomType = rooms.Select(room => new
-            {
-                Room = room,
-                RoomTypeName = room.RoomType != null ? room.RoomType.Description : "Unknown"
-            }).ToList();
+            // Lấy danh sách phòng và bao gồm thông tin RoomType của mỗi phòng
+            var rooms = await _roomRepository.GetRoomsByHotelIdAsync(id, includeRoomType: true);
 
             hotel.Images = hotelImages;
-            // Đặt danh sách phòng đã kết hợp vào thuộc tính Rooms của hotel
-            hotel.Rooms = roomsWithRoomType.Select(r => r.Room).ToList();
+            hotel.Rooms = rooms.ToList();
 
             // Truyền dữ liệu hotel sang view
             return View(hotel);
         }
-
     }
 }

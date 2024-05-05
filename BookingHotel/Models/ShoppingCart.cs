@@ -15,13 +15,13 @@
                 Items.Add(item);
             }
         }
-        public void RemoveItem(int productId)
+        public void RemoveItem(int roomId)
         {
-            Items.RemoveAll(i => i.Id == productId);
+            Items.RemoveAll(i => i.Id == roomId);
         }
-        public void UpdateQuantity(int productId, int quantity)
+        public void UpdateQuantity(int roomId, int quantity)
         {
-            var item = Items.FirstOrDefault(i => i.Id == productId);
+            var item = Items.FirstOrDefault(i => i.Id == roomId);
             if (item != null)
             {
                 item.Quantity = quantity;

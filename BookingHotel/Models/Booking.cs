@@ -9,7 +9,7 @@ namespace BookingHotel.Models
         public string UserId { get; set; }
         public ApplicationUser? User { get; set; }
         public string OrderName { get; set; }
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } 
         public string? Notes { get; set; }
         public bool IsConfirmed { get; set; } 
         public ICollection<BookingRoom> BookingRooms { get; set; }

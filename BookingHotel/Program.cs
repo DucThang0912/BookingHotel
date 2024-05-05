@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using BookingHotel.Repositories;
 using BookingHotel.Data;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +21,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);//thời gian hết hạn
+    options.Cookie.HttpOnly = true;//Cookie chỉ được truy cập bằng HTTP
+    options.Cookie.IsEssential = true;//Cookie là bắt buộc cho phiên
+});
+
 builder.Services.AddScoped<IHotelRepository, EFHotelRepository>();
 builder.Services.AddScoped<IRoomRepository, EFRoomRepository>();
 builder.Services.AddScoped<IRegionRepository, EFRegionRepository>();
@@ -33,6 +41,9 @@ builder.Services.AddScoped<IRoomAmenityRepository, EFRoomAmenityRepository>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// Đặt trước UseRouting
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

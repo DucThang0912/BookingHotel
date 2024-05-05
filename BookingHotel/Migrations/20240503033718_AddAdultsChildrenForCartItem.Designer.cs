@@ -4,6 +4,7 @@ using BookingHotel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingHotel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240503033718_AddAdultsChildrenForCartItem")]
+    partial class AddAdultsChildrenForCartItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,6 +122,18 @@ namespace BookingHotel.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Adults")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CheckInDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Children")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
 
@@ -152,19 +167,7 @@ namespace BookingHotel.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Adults")
-                        .HasColumnType("int");
-
                     b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CheckInDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CheckOutDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Children")
                         .HasColumnType("int");
 
                     b.Property<int>("RoomId")

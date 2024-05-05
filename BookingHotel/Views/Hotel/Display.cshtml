@@ -158,7 +158,48 @@
         }
 
         /*Room Hotel*/
+        /*--------------book--------*/
+        .flex {
+            display: flex;
+        }
 
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 30px;
+        }
+
+        .book {
+            width: 100%;
+            height: 20vh;
+            color: white;
+        }
+
+            .book .input {
+                background: #242e5a;
+                padding: 10px 10px 20px 10px;
+            }
+
+            .book .search {
+                background: #3f9cc1;
+                padding: 20px;
+            }
+
+        .flex input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            outline: none;
+            background: #263760;
+            margin-top: 20px;
+            color: white;
+        }
+
+        ::placeholder {
+            color: white;
+        }
+
+        /*--------------book--------*/
     </style>
 </head>
 <body>
@@ -246,29 +287,86 @@
     <!--Room Hotel-->
     <div class="roomHotel">
         <h2>Các phòng trống tại @Model.Name</h2>
-        <div class="rooms row justify-content-center">
-            @foreach (var room in Model.Rooms)
-            {
-                <div class="col-5 border border-light-subtle m-1 p-3 d-flex">
-                    <div>
-                        @if (room.IsAvailable == false)
-                        {
-                            <h3>Phòng số: @room.RoomNumber</h3>
-                            <p><strong>Giá mỗi đêm:</strong> @room.PricePerNight</p>
-                            <p>
-                                <span style="color: green;">Có sẵn</span>
-                            </p>
-                        }
+        <form id="bookingForm" onsubmit="return handleFormSubmission(event)">
+            <div class="book">
+                <div class="container flex">
+                    <div class="input grid">
+                        <div class="box">
+                            <label>Ngày nhận phòng:</label>
+                            <input type="date" id="checkinDate" name="checkInDate" placeholder="Check-in-Date">
+                        </div>
+                        <div class="box">
+                            <label>Ngày trả phòng:</label>
+                            <input type="date" id="checkoutDate" name="checkOutDate" placeholder="Check-out-Date">
+                        </div>
+                        <div class="box">
+                            <label>Người lớn:</label> <br>
+                            <input type="number" id="adults" name="adults" placeholder="0" min="0">
+                        </div>
+                        <div class="box">
+                            <label>Trẻ em:</label> <br>
+                            <input type="number" id="children" name="children" placeholder="0" min="0">
+                        </div>
+                        <input type="hidden" id="roomId" name="roomId" value="@Model.Id">
                     </div>
-                    <button class="ml-auto bg-blue text-light">Đặt phòng</button>
                 </div>
-            }
-        </div>
+            </div>
+            <div class="rooms">
+                @foreach (var room in Model.Rooms)
+                {
+                    @if (room.IsAvailable == false)
+                    {
+                        <div class="room-container d-flex align-items-center border border-light-subtle p-3 mb-3">
+                            <div class="room-image mr-3">
+                                <img src="@room.Hotel.ImageUrl" alt="Room Image" width="150" height="100">
+                            </div>
+                            <div class="room-info">
+                                <h3>Phòng số: @room.RoomNumber</h3>
+                                <p><strong>Giá mỗi đêm:</strong> @room.PricePerNight</p>
+                                <p>
+                                    <span style="color: green;">Có sẵn</span>
+                                </p>
+                            </div>
+                            <div class="room-capacity ml-auto">
+                                @if (room.RoomType != null)
+                                {
+                                    <p>Sức chứa: @room.RoomType.Adults người lớn @room.RoomType.Children trẻ em</p>
+                                }
+                                else
+                                {
+                                    <p>Sức chứa: 0 người</p>
+                                }
+                            </div>
+                            <input type="hidden" name="roomId" value="@room.Id" />
+                            <div class="btnRoom">
+                                <button type="submit" class="btn btn-danger text-uppercase px-4" name="action" value="addToCart" onclick="return validateForm()">Thêm vào giỏ hàng</button>
+                                <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng</button>
 
-
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </form>
     </div>
-
     <script>
+        function validateForm() {
+            var checkinDate = document.getElementById("checkinDate").value;
+            var checkoutDate = document.getElementById("checkoutDate").value;
+            var adults = document.getElementById("adults").value;
+
+            // Kiểm tra xem các trường đã được nhập hay chưa
+            if (checkinDate === "" || checkoutDate === "" || adults === "") {
+                alert("Vui lòng điền đầy đủ thông tin trước khi thêm vào giỏ hàng hoặc đặt phòng.");
+                return false; // Ngăn form được submit
+            }
+            if (checkinDate > checkoutDate) {
+                alert("Ngày trả phòng không hợp lệ.");
+                return false;
+            }
+            return true; // Cho phép form được submit
+        }
+
         // JavaScript function to open the modal
         function openModal() {
             document.getElementById("myModal").style.display = "block";
@@ -288,6 +386,35 @@
             element.style.backgroundColor = "transparent";
         }
 
+        function handleFormSubmission(event) {
+            event.preventDefault(); // Ngăn chặn form được gửi đi
+
+            const action = event.submitter.value; // Lấy giá trị của nút được nhấn
+
+            // Lấy giá trị của các trường input từ form và gán vào các trường ẩn
+            const checkinDate = document.getElementById("checkinDate").value;
+            const checkoutDate = document.getElementById("checkoutDate").value;
+            const adults = document.getElementById("adults").value;
+            const children = document.getElementById("children").value;
+
+            // Gán các giá trị vào các trường ẩn trong form
+            document.getElementById("checkinDate").value = checkinDate;
+            document.getElementById("checkoutDate").value = checkoutDate;
+            document.getElementById("adults").value = adults;
+            document.getElementById("children").value = children;
+
+            if (action === 'addToCart') {
+                // Gửi form đến phương thức Checkout trong ShoppingCartController
+                event.currentTarget.action = '@Url.Action("AddToCart", "ShoppingCart")';
+            } else if (action === 'checkoutNow') {
+                // Gửi form đến phương thức CheckoutNow trong ShoppingCartController
+                event.currentTarget.action = '@Url.Action("CheckoutNowForm", "ShoppingCart")';
+            }
+
+            event.currentTarget.submit(); // Gửi form đi
+        }
+
     </script>
+
 </body>
 </html>

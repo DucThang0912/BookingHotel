@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BookingHotel.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <header>
@@ -28,6 +29,14 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Liên hệ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="ShoppingCart" asp-action="Index">
+                            <span class="fa fa-shopping-cart"></span> 
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Booking" asp-action="History">Ls đặt</a>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">

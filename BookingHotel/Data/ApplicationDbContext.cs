@@ -22,7 +22,6 @@ namespace BookingHotel.Data
         public DbSet<RoomAmenity> RoomAmenities { get; set; }
         public DbSet<HotelService> HotelServices { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     }
 }
 
