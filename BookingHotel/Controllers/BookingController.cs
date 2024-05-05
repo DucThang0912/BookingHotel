@@ -21,7 +21,6 @@ namespace BookingHotel.Controllers
             _userManager = userManager;
         }
 
-        
         public async Task<IActionResult> HistoryAsync()
         {
             // Lấy thông tin người dùng hiện tại

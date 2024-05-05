@@ -338,11 +338,14 @@
                                 }
                             </div>
                             <input type="hidden" name="roomId" value="@room.Id" />
-                            <div class="btnRoom">
-                                <button type="submit" class="btn btn-danger text-uppercase px-4" name="action" value="addToCart" onclick="return validateForm()">Thêm vào giỏ hàng</button>
-                                <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng</button>
-
-                            </div>
+                            <ul class="btnRoom" style="list-style-type: none;">
+                                <li>
+                                    <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng ngay</button>
+                                </li>
+                                <li class="mt-2">
+                                    <button type="submit" class="btn btn-danger text-uppercase px-4" name="action" value="addToCart" onclick="return validateForm()">Thêm vào giỏ hàng</button>
+                                </li>
+                            </ul>
                         </div>
                     }
                 }
@@ -415,27 +418,26 @@
         }
 
     </script>
-
-    @* <!-- Hiển thị Comment -->
+    <!-- Form thêm mới Comment -->
+    <div class="add-comment">
+        <h3>Thêm Bình luận</h3>
+        <form asp-action="AddComment" method="post">
+            <input type="hidden" name="hotelId" value="@Model.Id" />
+            <textarea name="content" placeholder="Nhập nội dung bình luận của bạn"></textarea>
+            <button type="submit">Gửi</button>
+        </form>
+    </div>
+    <!-- Hiển thị Comment -->
     <div class="comments">
         <h2>Đánh giá và Bình luận</h2>
         @foreach (var review in Model.Reviews)
         {
             <div class="comment">
-                <p><strong>@review.User.UserName</strong> - @review.CreatedAt.ToShortDateString()</p>
+                <p>@ViewBag.FullName</p>
                 <p>@review.Comment</p>
             </div>
         }
     </div>
 
-    <!-- Form thêm mới Comment -->
-    <div class="add-comment">
-        <h3>Thêm Bình luận</h3>
-        <form id="commentForm" method="post" action="/Hotel/AddComment">
-            <input type="hidden" name="reviewId" value="@Model.Id" />
-            <textarea name="content" placeholder="Nhập nội dung bình luận của bạn"></textarea>
-            <button type="submit">Gửi</button>
-        </form>
-    </div> *@
 </body>
 </html>

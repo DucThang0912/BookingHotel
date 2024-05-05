@@ -19,6 +19,6 @@
         public int? Rating { get; set; }
 
         // Thời gian tạo và cập nhật
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }
