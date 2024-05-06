@@ -4,6 +4,7 @@ using BookingHotel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingHotel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240506023438_FixComment")]
+    partial class FixComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,18 +238,15 @@ namespace BookingHotel.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HotelId")
+                    b.Property<int?>("HotelId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId");
-
-                    b.HasIndex("UserId");
+                    b.HasIndex("ReviewId");
 
                     b.ToTable("Comments");
                 });
@@ -380,8 +380,7 @@ namespace BookingHotel.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId")
-                        .IsUnique();
+                    b.HasIndex("HotelId");
 
                     b.HasIndex("UserId");
 
@@ -653,21 +652,13 @@ namespace BookingHotel.Migrations
 
             modelBuilder.Entity("BookingHotel.Models.Comment", b =>
                 {
-                    b.HasOne("BookingHotel.Models.Hotel", "Hotel")
+                    b.HasOne("BookingHotel.Models.Review", "Review")
                         .WithMany("Comments")
-                        .HasForeignKey("HotelId")
+                        .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookingHotel.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-
-                    b.Navigation("User");
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.Hotel", b =>
@@ -710,8 +701,8 @@ namespace BookingHotel.Migrations
             modelBuilder.Entity("BookingHotel.Models.Review", b =>
                 {
                     b.HasOne("BookingHotel.Models.Hotel", "Hotel")
-                        .WithOne("Review")
-                        .HasForeignKey("BookingHotel.Models.Review", "HotelId")
+                        .WithMany("Reviews")
+                        .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -823,13 +814,11 @@ namespace BookingHotel.Migrations
 
             modelBuilder.Entity("BookingHotel.Models.Hotel", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("HotelServices");
 
                     b.Navigation("Images");
 
-                    b.Navigation("Review");
+                    b.Navigation("Reviews");
 
                     b.Navigation("Rooms");
                 });
@@ -837,6 +826,11 @@ namespace BookingHotel.Migrations
             modelBuilder.Entity("BookingHotel.Models.Region", b =>
                 {
                     b.Navigation("Hotels");
+                });
+
+            modelBuilder.Entity("BookingHotel.Models.Review", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.Room", b =>

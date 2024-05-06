@@ -200,6 +200,103 @@
         }
 
         /*--------------book--------*/
+
+
+        /*--------Rating------*/
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Thêm dòng này để căn giữa */
+            width: 40%;
+            margin: 0 auto; /* Thêm dòng này để căn giữa */
+            background-color: #003366;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Thêm dòng này để căn hai phần tử ở hai đầu */
+            width: 100%; /* Thêm dòng này để đảm bảo rating-item chiếm toàn bộ chiều rộng của rating-container */
+            margin-bottom: 10px;
+        }
+
+        .rating-label {
+            font-weight: bold;
+            text-align: left; /* Thêm dòng này để căn trái rating-label */
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: flex-end; /* Thêm dòng này để căn phải rating-stars */
+        }
+
+            .rating-stars input[type="radio"] {
+                display: none;
+            }
+
+            .rating-stars label {
+                cursor: pointer;
+                padding: 5px 10px;
+                background-color: gray;
+                color: #fff;
+                border-radius: 5px;
+                margin-right: 5px;
+                transition: background-color 0.3s ease;
+            }
+
+            .rating-stars input[type="radio"]:checked + label {
+                background-color: #ff6600;
+            }
+
+        .submit-btn {
+            background-color: #17a2b8;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            align-self: center; 
+        }
+
+        /*Comment*/
+        .comment-section {
+            margin-top: 20px;
+        }
+
+        .comment-list {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+            .comment-list .card {
+                border: none;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .comment-list .card-title {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .comment-list .card-text {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+
+            .comment-list .text-muted {
+                font-size: 14px;
+            }
+
     </style>
 </head>
 <body>
@@ -418,25 +515,101 @@
         }
 
     </script>
-    <!-- Form thêm mới Comment -->
-    <div class="add-comment">
-        <h3>Thêm Bình luận</h3>
-        <form asp-action="AddComment" method="post">
-            <input type="hidden" name="hotelId" value="@Model.Id" />
-            <textarea name="content" placeholder="Nhập nội dung bình luận của bạn"></textarea>
-            <button type="submit">Gửi</button>
-        </form>
-    </div>
-    <!-- Hiển thị Comment -->
-    <div class="comments">
-        <h2>Đánh giá và Bình luận</h2>
-        @foreach (var review in Model.Reviews)
-        {
-            <div class="comment">
-                <p>@ViewBag.FullName</p>
-                <p>@review.Comment</p>
+    <!--Đánh giá-->
+    <form asp-controller="Hotel" asp-action="AddReview" method="post">
+        <input type="hidden" name="hotelId" value="@Model.Id" />
+        <div class="rating-container">
+            <div class="rating-item">
+                <div class="rating-label">Dịch vụ:</div>
+                <div class="rating-stars">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <input type="radio" id="story-@i" name="Service" value="@i">
+                        <label for="story-@i">@i</label>
+                    }
+                </div>
             </div>
-        }
+
+            <div class="rating-item">
+                <div class="rating-label">Tiện nghi:</div>
+                <div class="rating-stars">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
+                        <label for="gameplay-@i">@i</label>
+                    }
+                </div>
+            </div>
+
+            <div class="rating-item">
+                <div class="rating-label">Sạch sẽ:</div>
+                <div class="rating-stars">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
+                        <label for="graphics-@i">@i</label>
+                    }
+                </div>
+            </div>
+
+            <div class="rating-item">
+                <div class="rating-label">Thoải mái:</div>
+                <div class="rating-stars">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <input type="radio" id="sound-@i" name="Comfort" value="@i">
+                        <label for="sound-@i">@i</label>
+                    }
+                </div>
+            </div>
+
+            <div class="rating-item">
+                <div class="rating-label">Địa điểm:</div>
+                <div class="rating-stars">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <input type="radio" id="overall-@i" name="Location" value="@i">
+                        <label for="overall-@i">@i</label>
+                    }
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Gửi đánh giá</button>
+        </div>
+    </form>
+
+   <!--Comment-->
+    <div class="comment-section">
+        <!--Comment Form-->
+        <form asp-controller="Hotel" asp-action="AddComment" method="post" class="mb-4">
+            <input type="hidden" name="hotelId" value="@Model.Id" />
+            <div class="form-group">
+                <label for="comment">Nhận xét của bạn:</label>
+                <textarea class="form-control" id="comment" name="Content" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Gửi nhận xét</button>
+        </form>
+
+        <!--Comment List-->
+        <div class="comment-list">
+            <h3 class="mb-3">Tất cả nhận xét:</h3>
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">@comment.User.FullName</h5>
+                            <p class="card-text">@comment.Content</p>
+                            <p class="card-text"><small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy")</small></p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Chưa có nhận xét nào.</p>
+            }
+        </div>
     </div>
 
 </body>

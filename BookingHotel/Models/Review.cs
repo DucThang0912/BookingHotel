@@ -13,12 +13,18 @@
         public ApplicationUser? User { get; set; }
 
         // Nội dung bình luận
-        public string? Comment { get; set; }
+        // Đánh giá về các tiêu chí
+        public int Service { get; set; } // Nhân viên phục vụ
+        public int Facilities { get; set; } // Tiện nghi
+        public int Cleanliness { get; set; } // Sạch sẽ
+        public int Comfort { get; set; } // Thoải mái
+        public int Location { get; set; } // Địa điểm
 
-        // Điểm đánh giá
-        public int? Rating { get; set; }
-
-        // Thời gian tạo và cập nhật
-        public DateTime? CreatedAt { get; set; }
+        // tính toán điểm trung bình
+        public double CalculateAverageRating()
+        {
+            int totalRating = Service + Facilities + Cleanliness + Comfort + Location;
+            return (double)totalRating / 5;
+        }
     }
 }

@@ -28,22 +28,9 @@ namespace BookingHotel.Repositories
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
         }
-
-        public async Task UpdateReviewAsync(Review review)
+        public async Task<Review> GetReviewByHotelIdAsync(int hotelId)
         {
-            _context.Entry(review).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            return await _context.Reviews.FirstOrDefaultAsync(r => r.HotelId == hotelId);
         }
-
-        public async Task DeleteReviewAsync(int id)
-        {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review != null)
-            {
-                _context.Reviews.Remove(review);
-                await _context.SaveChangesAsync();
-            }
-        }
-
     }
 }

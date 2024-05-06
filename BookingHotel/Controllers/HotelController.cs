@@ -5,6 +5,8 @@ using BookingHotel.Models;
 using System.Drawing;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using BookingHotel.Data;
 
 namespace BookingHotel.Controllers
 {
@@ -15,15 +17,19 @@ namespace BookingHotel.Controllers
         private readonly IRegionRepository _regionRepository;
         private readonly IRoomTypeRepository _roomTypeRepository;
         private readonly IReviewRepository _reviewRepository;
+        private readonly ICommentRepository _commentRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        public HotelController(IHotelRepository hotelRepository, IRoomRepository roomRepository, IRegionRepository regionRepository, IRoomTypeRepository roomTypeRepository, IReviewRepository reviewRepository, UserManager<ApplicationUser> userManager)
+        private readonly ApplicationDbContext _context;
+        public HotelController(IHotelRepository hotelRepository, IRoomRepository roomRepository, IRegionRepository regionRepository, IRoomTypeRepository roomTypeRepository, IReviewRepository reviewRepository, ICommentRepository commentRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _hotelRepository = hotelRepository;
             _roomRepository = roomRepository;
             _regionRepository = regionRepository;
             _roomTypeRepository = roomTypeRepository;
             _reviewRepository = reviewRepository;
+            _commentRepository = commentRepository;
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -40,41 +46,69 @@ namespace BookingHotel.Controllers
         }
         public async Task<IActionResult> Display(int id)
         {
-            var reviews = await _reviewRepository.GetAllReviewsAsync();
             var hotel = await _hotelRepository.GetByIdAsync(id);
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(id);
-
-            // Lấy danh sách phòng và bao gồm thông tin RoomType của mỗi phòng
             var rooms = await _roomRepository.GetRoomsByHotelIdAsync(id, includeRoomType: true);
             hotel.Images = hotelImages;
             hotel.Rooms = rooms.ToList();
-            hotel.Reviews = reviews;
+
+            // Lấy review và danh sách comment của khách sạn
+            var review = await _reviewRepository.GetReviewByHotelIdAsync(id);
+            var comments = await _commentRepository.GetCommentsByHotelIdAsync(id);
+
+            // Truyền dữ liệu sang view
+            ViewData["Review"] = review;
+            ViewData["Comments"] = comments;
+
             var user = await _userManager.GetUserAsync(User);
             ViewBag.FullName = user.FullName;
-            // Truyền dữ liệu hotel sang view
+
             return View(hotel);
         }
-
-        public async Task<IActionResult> AddComment(int hotelId, string content)
+        [HttpPost]
+        public async Task<IActionResult> AddReview(int hotelId, int service, int facilities, int cleanliness, int comfort, int location)
         {
             // Lấy thông tin người dùng hiện tại
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // Tạo đánh giá mới
-            var newReview = new Review
+            var review = new Review
             {
                 HotelId = hotelId,
                 UserId = userId,
-                Comment = content,
-                CreatedAt = DateTime.Now
+                Service = service,
+                Facilities = facilities,
+                Cleanliness = cleanliness,
+                Comfort = comfort,
+                Location = location
             };
 
-            // Lưu đánh giá vào cơ sở dữ liệu
-            await _reviewRepository.AddReviewAsync(newReview);
+            await _reviewRepository.AddReviewAsync(review);
 
             // Chuyển hướng về trang chi tiết hotel
             return RedirectToAction("Display", new { id = hotelId });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int hotelId, string content)
+        {
+            // Lấy thông tin người dùng hiện tại
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Tạo comment mới
+            var newComment = new Comment
+            {
+                HotelId = hotelId,
+                UserId = userId,
+                Content = content,
+                CreatedAt = DateTime.Now
+            };
+
+            // Lưu comment vào cơ sở dữ liệu
+            await _commentRepository.AddCommentAsync(newComment);
+
+            // Chuyển hướng về trang chi tiết hotel
+            return RedirectToAction("Display", new { id = hotelId });
+        }
     }
 }

@@ -10,7 +10,8 @@
         public Region? Region { get; set; }
         public string? ImageUrl { get; set; }
         public List<HotelImage>? Images { get; set; }
-        public List<Review>? Reviews { get; set; }
+        public Review? Review { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
         public ICollection<Room>? Rooms { get; set; }
         public ICollection<HotelService>? HotelServices { get; set; }
         
