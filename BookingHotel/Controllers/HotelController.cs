@@ -53,13 +53,12 @@ namespace BookingHotel.Controllers
             hotel.Rooms = rooms.ToList();
 
             // Lấy review và danh sách comment của khách sạn
-            var review = await _reviewRepository.GetReviewByHotelIdAsync(id);
+            var reviews = await _reviewRepository.GetAllReviewsByHotelIdAsync(id);
             var comments = await _commentRepository.GetCommentsByHotelIdAsync(id);
+            hotel.Reviews = reviews;
 
             // Truyền dữ liệu sang view
-            ViewData["Review"] = review;
             ViewData["Comments"] = comments;
-
             var user = await _userManager.GetUserAsync(User);
             ViewBag.FullName = user.FullName;
 
@@ -94,7 +93,7 @@ namespace BookingHotel.Controllers
         {
             // Lấy thông tin người dùng hiện tại
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+                
             // Tạo comment mới
             var newComment = new Comment
             {

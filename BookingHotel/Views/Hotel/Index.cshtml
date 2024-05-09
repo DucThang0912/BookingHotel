@@ -66,18 +66,17 @@
         /*--------------book--------*/
 
         /* Giới hạn chiều dài card */
-        .card {
-            height: 300px;
-        }
+        /* .card {
+            height: 30%;
+        } */
 
         /* Định dạng hình ảnh */
         .card-img {
             width: 100%;
             height: 200px; 
             object-fit: cover;
-            border-radius: 5px 5px 0 0; 
-            margin-top: 20px; 
-            margin-left: 10px;
+            border-radius: 5px; 
+            margin: 20px 10px 20px 10px;
         }
 
         /* Định dạng nút "Xem chi tiết" */
@@ -85,7 +84,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            margin: 10px;
+            margin: 20px;
         }
     </style>
 </head>
@@ -134,7 +133,7 @@
                 @foreach (var item in Model)
                 {
                     <div class="card mb-3">
-                        <div class="row no-gutters">
+                        <div class="row no-gutters ">
                             <div class="col-md-4">
                                 <img src="@item.ImageUrl" class="card-img" alt="Product Image">
                             </div>

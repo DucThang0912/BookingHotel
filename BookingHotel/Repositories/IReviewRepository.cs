@@ -8,5 +8,6 @@ namespace BookingHotel.Repositories
         Task<Review> GetReviewByIdAsync(int id);
         Task AddReviewAsync(Review review);
         Task<Review> GetReviewByHotelIdAsync(int hotelId);
+        Task<List<Review>> GetAllReviewsByHotelIdAsync(int hotelId);
     }
 }

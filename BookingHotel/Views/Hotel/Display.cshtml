@@ -261,12 +261,14 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            align-self: center; 
+            align-self: center;
         }
 
         /*Comment*/
         .comment-section {
             margin-top: 20px;
+            border: 10px;
+            border-color: black;
         }
 
         .comment-list {
@@ -318,7 +320,7 @@
     <div class="overView mt-4 d-flex">
         <div class="col-sm-6 col-md-8 border border-light-subtle p-3">
             <h2>@Model.Name</h2>
-            <p><a href="https://www.google.com/maps/search/?api=1&query=@Model.Name" target="_blank">@Model.Address</a></p>
+            <p><a href="https://www.google.com/maps/search/?api=1&query=@Model.Name@Model.Address" target="_blank">@Model.Address</a></p>
             <div class="horizontal-line"></div>
             <div>@Model.Description</div>
         </div>
@@ -327,7 +329,7 @@
                     height="300"
                     frameborder="0"
                     style="border: 0"
-                    src="https://maps.google.com/maps?q=@Model.Name&output=embed"
+                    src="https://maps.google.com/maps?q=@Model.Name@Model.Address&output=embed"
                     allowfullscreen></iframe>
         </div>
     </div>
@@ -516,68 +518,116 @@
 
     </script>
     <!--Đánh giá-->
-    <form asp-controller="Hotel" asp-action="AddReview" method="post">
-        <input type="hidden" name="hotelId" value="@Model.Id" />
-        <div class="rating-container">
-            <div class="rating-item">
-                <div class="rating-label">Dịch vụ:</div>
-                <div class="rating-stars">
-                    @for (int i = 2; i <= 10; i += 2)
-                    {
-                        <input type="radio" id="story-@i" name="Service" value="@i">
-                        <label for="story-@i">@i</label>
-                    }
+    <div class="rating-section">
+        <div>
+            <h3 class="text-center mb-4">ĐÁNH GIÁ GAME SEA OF THIEVES SEASON 12 (46 ĐÁNH GIÁ)</h3>
+            @foreach (var avenRating in Model.Reviews)
+            {
+                <div class="rating-container">
+                    <div class="rating-circle">
+                        <span class="rating-score"><h5>@avenRating.CalculateAverageRating().ToString()</h5></span>
+                        <span class="rating-text">Hay Đây</span>
+                    </div>
+                    <div class="rating-bars">
+                        <div class="rating-bar">
+                            <span class="rating-label">Cốt Truyện</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Service;" aria-valuenow="@avenRating.Service" aria-valuemin="0" aria-valuemax="10">@avenRating.Service</div>
+                            </div>
+                        </div>
+                        <div class="rating-bar">
+                            <span class="rating-label">Gameplay</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Facilities;" aria-valuenow="@avenRating.Facilities" aria-valuemin="0" aria-valuemax="10">@avenRating.Facilities</div>
+                            </div>
+                        </div>
+                        <div class="rating-bar">
+                            <span class="rating-label">Đồ Họa</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Comfort;" aria-valuenow="@avenRating.Comfort" aria-valuemin="0" aria-valuemax="10">@avenRating.Comfort</div>
+                            </div>
+                        </div>
+                        <div class="rating-bar">
+                            <span class="rating-label">Âm Thanh</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Cleanliness;" aria-valuenow="@avenRating.Cleanliness" aria-valuemin="0" aria-valuemax="10">@avenRating.Cleanliness</div>
+                            </div>
+                        </div>
+                        <div class="rating-bar">
+                            <span class="rating-label">Đánh Giá Tổng Thể</span>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Location;" aria-valuenow="@avenRating.Location" aria-valuemin="0" aria-valuemax="10">@avenRating.Location</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="rating-item">
-                <div class="rating-label">Tiện nghi:</div>
-                <div class="rating-stars">
-                    @for (int i = 2; i <= 10; i += 2)
-                    {
-                        <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
-                        <label for="gameplay-@i">@i</label>
-                    }
-                </div>
-            </div>
-
-            <div class="rating-item">
-                <div class="rating-label">Sạch sẽ:</div>
-                <div class="rating-stars">
-                    @for (int i = 2; i <= 10; i += 2)
-                    {
-                        <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
-                        <label for="graphics-@i">@i</label>
-                    }
-                </div>
-            </div>
-
-            <div class="rating-item">
-                <div class="rating-label">Thoải mái:</div>
-                <div class="rating-stars">
-                    @for (int i = 2; i <= 10; i += 2)
-                    {
-                        <input type="radio" id="sound-@i" name="Comfort" value="@i">
-                        <label for="sound-@i">@i</label>
-                    }
-                </div>
-            </div>
-
-            <div class="rating-item">
-                <div class="rating-label">Địa điểm:</div>
-                <div class="rating-stars">
-                    @for (int i = 2; i <= 10; i += 2)
-                    {
-                        <input type="radio" id="overall-@i" name="Location" value="@i">
-                        <label for="overall-@i">@i</label>
-                    }
-                </div>
-            </div>
-            <button type="submit" class="submit-btn">Gửi đánh giá</button>
+            }
         </div>
-    </form>
+    </div>
+    <div>
+        <form asp-controller="Hotel" asp-action="AddReview" method="post">
+            <input type="hidden" name="hotelId" value="@Model.Id" />
+            <div class="rating-container">
+                <div class="rating-item">
+                    <div class="rating-label">Dịch vụ:</div>
+                    <div class="rating-stars">
+                        @for (int i = 2; i <= 10; i += 2)
+                        {
+                            <input type="radio" id="story-@i" name="Service" value="@i">
+                            <label for="story-@i">@i</label>
+                        }
+                    </div>
+                </div>
 
-   <!--Comment-->
+                <div class="rating-item">
+                    <div class="rating-label">Tiện nghi:</div>
+                    <div class="rating-stars">
+                        @for (int i = 2; i <= 10; i += 2)
+                        {
+                            <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
+                            <label for="gameplay-@i">@i</label>
+                        }
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <div class="rating-label">Sạch sẽ:</div>
+                    <div class="rating-stars">
+                        @for (int i = 2; i <= 10; i += 2)
+                        {
+                            <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
+                            <label for="graphics-@i">@i</label>
+                        }
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <div class="rating-label">Thoải mái:</div>
+                    <div class="rating-stars">
+                        @for (int i = 2; i <= 10; i += 2)
+                        {
+                            <input type="radio" id="sound-@i" name="Comfort" value="@i">
+                            <label for="sound-@i">@i</label>
+                        }
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <div class="rating-label">Địa điểm:</div>
+                    <div class="rating-stars">
+                        @for (int i = 2; i <= 10; i += 2)
+                        {
+                            <input type="radio" id="overall-@i" name="Location" value="@i">
+                            <label for="overall-@i">@i</label>
+                        }
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Gửi đánh giá</button>
+            </div>
+        </form>
+    </div>
+    </div>
+    <!--Comment-->
     <div class="comment-section">
         <!--Comment Form-->
         <form asp-controller="Hotel" asp-action="AddComment" method="post" class="mb-4">

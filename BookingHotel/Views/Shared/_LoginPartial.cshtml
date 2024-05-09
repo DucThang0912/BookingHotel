@@ -29,7 +29,7 @@
         var user = await UserManager.GetUserAsync(User);
         var fullName = user.FullName;
         <li class="nav-item">
-            <a id="manage" class="nav-link ml-2" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@fullName</a>
+            <a id="manage" class="nav-link ml-2 text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@fullName</a>
         </li>
         <li class="nav-item">
             <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Region", new { area = "" })">
