@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BookingHotel.Models.Amenity>
+
+<h1>Add Amenities to Room</h1>
+
+<form id="addAmenityForm" action="@Url.Action("AddAmenityToRoomType", new { id = ViewBag.RoomTypeId })" method="post">
+    <div class="container my-5">
+        <div class="row mt-4">
+            @foreach (var amenity in Model)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card @((ViewBag.SelectedAmenities != null && ViewBag.SelectedAmenities.Contains(amenity.Id)) ? "border-success" : "")">
+                        <div class="card-body">
+                            <h5 class="card-title">@amenity.Name</h5>
+                            @{
+                                var btnText = (ViewBag.SelectedAmenities != null && ViewBag.SelectedAmenities.Contains(amenity.Id)) ? "Remove Amenity" : "Add Amenity";
+                                var btnClass = (ViewBag.SelectedAmenities != null && ViewBag.SelectedAmenities.Contains(amenity.Id)) ? "btn-danger" : "btn-primary";
+                            }
+                            <button type="button" class="btn @btnClass add-amenity-btn" data-amenity-id="@amenity.Id">@btnText</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <input type="hidden" id="selectedAmenityId" name="selectedAmenityId" />
+    <input type="hidden" id="roomId" name="roomId" value="@ViewBag.RoomTypeId" />
+</form>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.add-amenity-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const amenityId = button.dataset.amenityId;
+                document.getElementById('selectedAmenityId').value = amenityId;
+                document.getElementById('addAmenityForm').submit();
+            });
+        });
+    </script>
+}

@@ -4,35 +4,73 @@
     ViewData["Title"] = "Room Types";
 }
 
-<h2>Room Types</h2>
-
-<p>
-    <a asp-action="Add" class="btn btn-primary">Add New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Adults</th>
-            <th>Children</th>
-            <th>Description</th>
-
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Room Types</h1>
+        <div>
+            <a asp-action="Add" asp-route-hotelId="@ViewBag.HotelId" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Room Type
+            </a>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var roomType in Model)
         {
-            <tr>
-                <td>@item.Adults</td>
-                <th>@item.Children</th>
-                <td>@item.Description</td>
-                
-                <td>
-                    <a asp-action="Update" asp-route-id="@item.Id">Update</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-img-top">
+                        @if (!string.IsNullOrEmpty(roomType.ImageUrl))
+                        {
+                            <img src="@roomType.ImageUrl" alt="Room Type Image" class="card-img-top room-type-img">
+                        }
+                        else
+                        {
+                            <div class="placeholder-img"></div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@roomType.Name</h5>
+                        <p class="card-text">@roomType.Description</p>
+                        <p class="card-text"><small class="text-muted">Price: $@roomType.PricePerNight mỗi đêm</small></p>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Update" asp-route-id="@roomType.Id" class="btn btn-secondary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@roomType.Id" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-action="AddAmenitiesToRoomType" asp-route-id="@roomType.Id" class="btn btn-success btn-sm">Amenities</a>
+                        <a asp-controller="Room" asp-action="Index" asp-route-roomTypeId="@roomType.Id" class="btn btn-primary btn-sm">Room</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Thêm hover effect cho các thẻ card
+        const roomTypeCards = document.querySelectorAll('.room-type-card');
+
+        roomTypeCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+}
+
+
+<style>
+    .room-type-img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .placeholder-img {
+        height: 200px;
+        background-color: #e9ecef;
+    }
+</style>

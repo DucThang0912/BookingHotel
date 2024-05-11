@@ -12,7 +12,7 @@
         public List<HotelImage>? Images { get; set; }
         public ICollection<Review> Reviews { get; set; }
         public ICollection<Comment>? Comments { get; set; }
-        public ICollection<Room>? Rooms { get; set; }
+        public ICollection<RoomType>? RoomTypes { get; set; }
         public ICollection<HotelService>? HotelServices { get; set; }
         
     }

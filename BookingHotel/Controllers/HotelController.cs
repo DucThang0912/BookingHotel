@@ -35,22 +35,30 @@ namespace BookingHotel.Controllers
         public async Task<IActionResult> Index()
         {
             var hotels = await _hotelRepository.GetAllAsync();
-            //foreach (var hotel in hotels)
-            //{
-            //    if (hotel.RegionId != null)
-            //    {
-            //        hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
-            //    }
-            //}
+            foreach (var hotel in hotels)
+            {
+                if (hotel.RegionId != null)
+                {
+                    hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
+                }
+            }
             return View(hotels);
         }
         public async Task<IActionResult> Display(int id)
         {
             var hotel = await _hotelRepository.GetByIdAsync(id);
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(id);
-            var rooms = await _roomRepository.GetRoomsByHotelIdAsync(id, includeRoomType: true);
+            var roomTypes = await _roomTypeRepository.GetRoomTypesByHotelIdAsync(id);
             hotel.Images = hotelImages;
-            hotel.Rooms = rooms.ToList();
+            hotel.RoomTypes = roomTypes.ToList();
+
+            // Lấy số lượng phòng của mỗi loại phòng
+            var roomCounts = new Dictionary<int, int>();
+            foreach (var roomType in hotel.RoomTypes)
+            {
+                int count = await _roomTypeRepository.CountRoomByRoomTypeAsync(roomType.Id);
+                roomCounts.Add(roomType.Id, count);
+            }
 
             // Lấy review và danh sách comment của khách sạn
             var reviews = await _reviewRepository.GetAllReviewsByHotelIdAsync(id);
@@ -59,11 +67,13 @@ namespace BookingHotel.Controllers
 
             // Truyền dữ liệu sang view
             ViewData["Comments"] = comments;
+            ViewData["RoomCounts"] = roomCounts; // Truyền số lượng phòng của mỗi loại phòng
             var user = await _userManager.GetUserAsync(User);
             ViewBag.FullName = user.FullName;
 
             return View(hotel);
         }
+
         [HttpPost]
         public async Task<IActionResult> AddReview(int hotelId, int service, int facilities, int cleanliness, int comfort, int location)
         {

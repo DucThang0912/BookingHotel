@@ -26,7 +26,20 @@ namespace BookingHotel.Repositories
             _context.RoomTypes.Add(roomType);
             await _context.SaveChangesAsync();
         }
-
+        public async Task<IEnumerable<RoomType>> GetRoomTypesByHotelIdAsync(int hotelId)
+        {
+            IQueryable<RoomType> query = _context.RoomTypes.Where(r => r.HotelId == hotelId);
+            return await query.ToListAsync();
+        }
+        public async Task AddRoomTypeImageAsync(RoomTypeImage roomTypeImage)
+        {
+            _context.RoomTypeImages.Add(roomTypeImage);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<List<RoomTypeImage>> GetRoomTypeImagesAsync(int id)
+        {
+            return await _context.RoomTypeImages.Where(rti => rti.Id == id).ToListAsync();
+        }
         public async Task UpdateAsync(RoomType roomType)
         {
             _context.RoomTypes.Update(roomType);
@@ -39,5 +52,14 @@ namespace BookingHotel.Repositories
             _context.RoomTypes.Remove(roomType);
             await _context.SaveChangesAsync();
         }
+        public async Task<int> CountRoomByRoomTypeAsync(int id)
+        {
+            int count = await _context.Rooms
+                .Where(r => r.RoomType.Id == id && r.IsAvailable == false)
+                .CountAsync();
+
+            return count;
+        }
+
     }
 }

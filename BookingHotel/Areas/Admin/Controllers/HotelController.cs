@@ -46,8 +46,8 @@ namespace BookingHotel.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Hotel hotel, IFormFile? imageUrl, IEnumerable<IFormFile>? additionalImages, int regionId)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 if (imageUrl != null && imageUrl.Length > 0)
                 {
                     string imagePath = await SaveImage(imageUrl);
@@ -66,12 +66,12 @@ namespace BookingHotel.Areas.Admin.Controllers
                 }
 
                 return RedirectToAction(nameof(Index));
-            }
+            //}
 
             // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
-            var regions = await _regionRepository.GetAllAsync();
-            ViewBag.Regions = new SelectList(regions, "Id", "Name");
-            return View(hotel);
+            //var regions = await _regionRepository.GetAllAsync();
+            //ViewBag.Regions = new SelectList(regions, "Id", "Name");
+            //return View(hotel);
         }
         private async Task<string> SaveImage(IFormFile image)
         {
@@ -102,6 +102,18 @@ namespace BookingHotel.Areas.Admin.Controllers
                 }
             }
         }
+        public async Task<IActionResult> Display(int id)
+        {
+            var hotel = await _hotelRepository.GetByIdAsync(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
+
+            hotel.Images = await _hotelRepository.GetHotelImagesAsync(id);
+
+            return View(hotel);
+        }
         public async Task<IActionResult> Update(int id)
         {
             var hotel = await _hotelRepository.GetByIdAsync(id);
@@ -120,41 +132,53 @@ namespace BookingHotel.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(Hotel hotel, IFormFile? imageUrl, IEnumerable<IFormFile>? newImages)
         {
-            if (ModelState.IsValid)
+            var existingHotel = await _context.Hotels.Include(h => h.Images).FirstOrDefaultAsync(h => h.Id == hotel.Id);
+
+            if (existingHotel == null)
             {
-                var existingHotel = await _context.Hotels.Include(h => h.Images).FirstOrDefaultAsync(h => h.Id == hotel.Id);
-
-                if (existingHotel == null)
-                {
-                    return NotFound();
-                }
-
-                if (imageUrl != null && imageUrl.Length > 0)
-                {
-                    string imagePath = await SaveImage(imageUrl);
-                    existingHotel.ImageUrl = imagePath;
-                }
-
-                // Xóa ảnh cũ trong HotelImage trước khi thêm mới
-                _context.HotelImages.RemoveRange(existingHotel.Images);
-
-                if (newImages != null)
-                {
-                    await SaveAdditionalImages(existingHotel.Id, newImages);
-                }
-
-                _context.Hotels.Update(existingHotel);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
-            var regions = await _regionRepository.GetAllAsync();
-            ViewBag.Regions = new SelectList(regions, "Id", "Name");
-            return View(hotel);
+            // Cập nhật các thuộc tính của existingHotel từ hotel
+            existingHotel.Name = hotel.Name;
+            existingHotel.Description = hotel.Description;
+            existingHotel.Address = hotel.Address;
+            existingHotel.RegionId = hotel.RegionId;
+
+            if (imageUrl != null && imageUrl.Length > 0)
+            {
+                string imagePath = await SaveImage(imageUrl);
+                existingHotel.ImageUrl = imagePath;
+            }
+
+            // Không xóa tất cả HotelImage hiện có
+            // Thay vào đó, thêm các ảnh mới vào danh sách
+            if (newImages != null)
+            {
+                await SaveAdditionalImages(existingHotel.Id, newImages);
+            }
+
+            _context.Hotels.Update(existingHotel);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteImage(int id)
+        {
+            var image = await _context.HotelImages.FindAsync(id);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            _context.HotelImages.Remove(image);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
         public async Task<IActionResult> Delete(int id)
         {
             var hotel = await _hotelRepository.GetByIdAsync(id);

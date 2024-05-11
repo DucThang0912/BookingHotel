@@ -1,0 +1,49 @@
+﻿@model BookingHotel.Models.Hotel
+
+@{
+    ViewData["Title"] = "Hotel Details";
+}
+
+<h2>Hotel Details</h2>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Name:</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+
+        <dt class="col-sm-2">Description:</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+
+        <dt class="col-sm-2">Address:</dt>
+        <dd class="col-sm-10">@Model.Address</dd>
+
+        <dt class="col-sm-2">Region:</dt>
+        <dd class="col-sm-10">@Model.Region?.Name</dd>
+
+        <dt class="col-sm-2">Hotel Image:</dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="Hotel Image" style="max-width: 200px;" />
+            }
+            else
+            {
+                <p>No image available</p>
+            }
+        </dd>
+
+        <dt class="col-sm-2">Additional Images:</dt>
+        <dd class="col-sm-10">
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                foreach (var image in Model.Images)
+                {
+                    <img src="@image.ImageUrl" alt="Additional Image" style="max-width: 200px; margin-bottom: 10px;" />
+                }
+            }
+            else
+            {
+                <p>No additional images available</p>
+            }
+        </dd>
+    </dl>
+</div>

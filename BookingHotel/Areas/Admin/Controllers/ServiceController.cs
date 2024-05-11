@@ -28,61 +28,33 @@ namespace BookingHotel.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Add(Service service, IFormFile? imageUrl, int regionId)
+        public async Task<IActionResult> Add(Service service)
         {
             if (ModelState.IsValid)
             {
-                if (imageUrl != null && imageUrl.Length > 0)
-                {
-                    string imagePath = await SaveImage(imageUrl);
-                    service.ImageUrl = imagePath;
-                }
-                else
-                {
-                    service.ImageUrl = null;
-                }
                 await _serviceRepository.AddAsync(service);
                 return RedirectToAction(nameof(Index));
             }
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             return View(service);
-        }
-        private async Task<string> SaveImage(IFormFile image)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            var filePath = Path.Combine("wwwroot/images/services", fileName); // Đường dẫn lưu trữ hình ảnh trên máy chủ
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await image.CopyToAsync(fileStream);
-            }
-
-            return "/images/services/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
         public async Task<IActionResult> Update(int id)
         {
-            var service = await _serviceRepository.GetByIdAsync(id);
-            if (service == null)
+            var roomType = await _serviceRepository.GetByIdAsync(id);
+            if (roomType == null)
             {
                 return NotFound();
             }
-            return View(service);
+            return View(roomType);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Service service, IFormFile? imageUrl)
+        public async Task<IActionResult> Update(int id, Service service)
         {
+            if (id != service.Id)
+            {
+                return NotFound();
+            }
             if (ModelState.IsValid)
             {
-                var existingService = await _serviceRepository.GetByIdAsync(service.Id);
-                if (imageUrl != null && imageUrl.Length > 0)
-                {
-                    string imagePath = await SaveImage(imageUrl);
-                    service.ImageUrl = imagePath;
-                }
-                else
-                {
-                    service.ImageUrl = existingService.ImageUrl;
-                }
                 await _serviceRepository.UpdateAsync(service);
                 return RedirectToAction(nameof(Index));
             }

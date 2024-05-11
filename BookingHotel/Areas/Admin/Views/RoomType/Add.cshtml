@@ -6,22 +6,36 @@
 
 <h2>Add Room Type</h2>
 
-<form asp-action="Add">
+<form asp-action="Add" method="post" enctype="multipart/form-data" asp-route-hotelId="@ViewBag.HotelId">
     <div class="form-group">
-        <label asp-for="Adults" class="control-label"></label>
-        <input asp-for="Adults" class="form-control" type="number" min="0" />
-        <span asp-validation-for="Adults" class="text-danger"></span>
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Children" class="control-label"></label>
-        <input asp-for="Children" class="form-control" type="number" min="0" />
-        <span asp-validation-for="Children" class="text-danger"></span>
+        <label asp-for="TotalGuests" class="control-label"></label>
+        <input asp-for="TotalGuests" class="form-control" type="number" min="0" />
+        <span asp-validation-for="TotalGuests" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PricePerNight" class="control-label"></label>
+        <input asp-for="PricePerNight" class="form-control" type="number" min="0" />
+        <span asp-validation-for="PricePerNight" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Description" class="control-label"></label>
         <input asp-for="Description" class="form-control" />
         <span asp-validation-for="Description" class="text-danger"></span>
+    </div>  
+    <div class="form-group">
+        <label asp-for="ImageUrl">RoomType Image</label>
+        <input type="file" asp-for="ImageUrl" class="form-control" />
     </div>
+    <div class="form-group">
+        <label>Additional Images</label>
+        <input type="file" name="additionalImages" multiple class="form-control" />
+    </div>
+    <input type="hidden" asp-for="HotelId" value="@ViewBag.HotelId" />
     <div class="form-group">
         <button type="submit" class="btn btn-primary mt-3">Add</button>
     </div>

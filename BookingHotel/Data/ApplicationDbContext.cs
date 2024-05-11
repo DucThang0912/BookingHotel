@@ -14,6 +14,7 @@ namespace BookingHotel.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Region> Regions { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
+        public DbSet<RoomTypeImage> RoomTypeImages { get; set; }
         public DbSet<HotelImage> HotelImages { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }

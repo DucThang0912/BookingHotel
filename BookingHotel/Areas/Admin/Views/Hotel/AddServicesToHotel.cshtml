@@ -9,7 +9,6 @@
             {
                 <div class="col-md-3 mb-3">
                     <div class="card @((ViewBag.SelectedServices != null && ViewBag.SelectedServices.Contains(service.Id)) ? "border-success" : "")">
-                        <img src="@service.ImageUrl" class="card-img-top" alt="Service Image">
                         <div class="card-body">
                             <h5 class="card-title">@service.Name</h5>
                             @{

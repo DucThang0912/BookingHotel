@@ -27,61 +27,33 @@ namespace BookingHotel.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Add(Amenity amenity, IFormFile? imageUrl, int regionId)
+        public async Task<IActionResult> Add(Amenity amenity)
         {
             if (ModelState.IsValid)
             {
-                if (imageUrl != null && imageUrl.Length > 0)
-                {
-                    string imagePath = await SaveImage(imageUrl);
-                    amenity.ImageUrl = imagePath;
-                }
-                else
-                {
-                    amenity.ImageUrl = null;
-                }
                 await _amenityRepository.AddAsync(amenity);
                 return RedirectToAction(nameof(Index));
             }
-            // Nếu ModelState không hợp lệ, hiển thị form với dữ liệu đã nhập
             return View(amenity);
-        }
-        private async Task<string> SaveImage(IFormFile image)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            var filePath = Path.Combine("wwwroot/images/amenities", fileName); // Đường dẫn lưu trữ hình ảnh trên máy chủ
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await image.CopyToAsync(fileStream);
-            }
-
-            return "/images/amenities/" + fileName; // Trả về đường dẫn tương đối của hình ảnh
         }
         public async Task<IActionResult> Update(int id)
         {
-            var amenity = await _amenityRepository.GetByIdAsync(id);
-            if (amenity == null)
+            var roomType = await _amenityRepository.GetByIdAsync(id);
+            if (roomType == null)
             {
                 return NotFound();
             }
-            return View(amenity);
+            return View(roomType);
         }
         [HttpPost]
-        public async Task<IActionResult> Update(Amenity amenity, IFormFile? imageUrl)
+        public async Task<IActionResult> Update(int id, Amenity amenity)
         {
+            if (id != amenity.Id)
+            {
+                return NotFound();
+            }
             if (ModelState.IsValid)
             {
-                var existingAmenity = await _amenityRepository.GetByIdAsync(amenity.Id);
-                if (imageUrl != null && imageUrl.Length > 0)
-                {
-                    string imagePath = await SaveImage(imageUrl);
-                    amenity.ImageUrl = imagePath;
-                }
-                else
-                {
-                    amenity.ImageUrl = existingAmenity.ImageUrl;
-                }
                 await _amenityRepository.UpdateAsync(amenity);
                 return RedirectToAction(nameof(Index));
             }

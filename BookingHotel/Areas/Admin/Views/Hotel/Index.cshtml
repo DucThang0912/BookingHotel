@@ -39,10 +39,10 @@
                         <p class="card-text"><small class="text-muted">@item.Address, @item.Region.Name</small></p>
                     </div>
                     <div class="card-footer">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">View</a>
+                        <a asp-action="Display" asp-route-id="@item.Id" class="btn btn-primary btn-sm">View</a>
                         <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                        <a asp-action="Index" asp-controller="Room" asp-route-hotelId="@item.Id" class="btn btn-success btn-sm">Room</a>
+                        <a asp-action="Index" asp-controller="RoomType" asp-route-hotelId="@item.Id" class="btn btn-success btn-sm">RoomType</a>
                         <a asp-action="AddServicesToHotel" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Service</a>
                     </div>
                 </div>

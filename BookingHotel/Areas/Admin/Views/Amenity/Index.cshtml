@@ -23,16 +23,6 @@
         {
             <div class="col amenity-card" data-name="@item.Name.ToLower()">
                 <div class="card h-100">
-                    <div class="card-img-top">
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                        {
-                            <img src="@item.ImageUrl" alt="Amenity Image" class="card-img-top amenity-img">
-                        }
-                        else
-                        {
-                            <div class="placeholder-img"></div>
-                        }
-                    </div>
                     <div class="card-body">
                         <h5 class="card-title">@item.Name</h5>
                         <div class="card-footer">

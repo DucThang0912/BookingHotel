@@ -10,7 +10,7 @@ namespace BookingHotel.Repositories
         Task UpdateAsync(Hotel hotel);
         Task DeleteAsync(int id);
         Task AddHotelImageAsync(HotelImage hotelImage);
-        Task<List<HotelImage>> GetHotelImagesAsync(int hotelId);
+        Task <List<HotelImage>> GetHotelImagesAsync(int hotelId);
         void RemoveHotelImages(int hotelId);
     }
 }

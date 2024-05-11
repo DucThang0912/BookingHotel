@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@Model.Name - Hotel Gallery</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
         /*MenuGroup*/
         .menuGroup {
@@ -35,7 +37,7 @@
                         width: 100%;
                         height: 3px; /* Độ dài của gạch */
                         border-radius: 2px;
-                        background-color: #008080; /* Màu của gạch */
+                        background-color: #008080;
                         transition: width 0.3s;
                         transform: scaleX(0); /* Ẩn gạch ban đầu */
                     }
@@ -46,9 +48,9 @@
                     }
 
         .horizontal-line {
-            height: 2px; /* Chiều cao của thanh ngang */
-            background-color: #ccc; /* Màu sắc của thanh ngang */
-            margin-bottom: 10px; /* Khoảng cách giữa thanh ngang và phần tử phía dưới */
+            height: 2px;
+            background-color: #ccc;
+            margin-bottom: 10px;
         }
 
         /*Image Hotel*/
@@ -173,10 +175,10 @@
             width: 100%;
             height: 20vh;
             color: white;
+            background: #242e5a;
         }
 
             .book .input {
-                background: #242e5a;
                 padding: 10px 10px 20px 10px;
             }
 
@@ -199,40 +201,108 @@
             color: white;
         }
 
-        /*--------------book--------*/
+        /*--------------RoomHotel--------*/
+        .roomHotel {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
 
+        .room-table th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            background-color: #242e5a;
+            color: white;
+        }
 
+        .room-table td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .room-table th,
+        .room-table td {
+            font-size: 13px; /* Set font size to 14px */
+        }
+
+        .room-price {
+            text-align: center;
+        }
+
+        .room-capacity {
+            text-align: center;
+        }
+
+        .room-select {
+            text-align: center;
+        }
         /*--------Rating------*/
-        .rating-container {
+        
+        .rating-section {
+            margin: 30px 10px; /* Thêm margin 10px cho toàn bộ rating section */
+            border: 1px solid #ccc; /* Tạo viền bao quanh rating section */
+            padding: 20px;
+            border-radius: 5px;
+            background-color: darkgray;
+        }
+
+        .progress {
+            max-width: 500px; /* Giới hạn chiều rộng tối đa của rating-container */
+            margin: 0 auto; /* Căn giữa rating-container */
+        }
+
+        .average-rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle-border {
+            width: 150px; 
+            height: 150px;
+            border-radius: 50%;
+            border: 10px solid black; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .rating-criteria {
+            /* Không cần định kiểu cho phần hiển thị các tiêu chí đánh giá */
+        }
+
+        .rating-post {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Thêm dòng này để căn giữa */
-            width: 40%;
-            margin: 0 auto; /* Thêm dòng này để căn giữa */
+            margin: 0 auto;
             background-color: #003366;
             color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 40%;
         }
 
         .rating-item {
             display: flex;
             align-items: center;
             justify-content: space-between; /* Thêm dòng này để căn hai phần tử ở hai đầu */
-            width: 100%; /* Thêm dòng này để đảm bảo rating-item chiếm toàn bộ chiều rộng của rating-container */
+            width: 100%;
             margin-bottom: 10px;
         }
 
         .rating-label {
             font-weight: bold;
-            text-align: left; /* Thêm dòng này để căn trái rating-label */
+            text-align: left;
         }
 
         .rating-stars {
             display: flex;
-            justify-content: flex-end; /* Thêm dòng này để căn phải rating-stars */
+            justify-content: flex-end;
         }
 
             .rating-stars input[type="radio"] {
@@ -384,7 +454,7 @@
     <div id="modalBackdrop" class="modal-backdrop"></div>
 
     <!--Room Hotel-->
-    <div class="roomHotel">
+    <div class="roomHotel pt-3">
         <h2>Các phòng trống tại @Model.Name</h2>
         <form id="bookingForm" onsubmit="return handleFormSubmission(event)">
             <div class="book">
@@ -410,44 +480,87 @@
                     </div>
                 </div>
             </div>
-            <div class="rooms">
-                @foreach (var room in Model.Rooms)
-                {
-                    @if (room.IsAvailable == false)
-                    {
-                        <div class="room-container d-flex align-items-center border border-light-subtle p-3 mb-3">
-                            <div class="room-image mr-3">
-                                <img src="@room.Hotel.ImageUrl" alt="Room Image" width="150" height="100">
-                            </div>
-                            <div class="room-info">
-                                <h3>Phòng số: @room.RoomNumber</h3>
-                                <p><strong>Giá mỗi đêm:</strong> @room.PricePerNight</p>
-                                <p>
-                                    <span style="color: green;">Có sẵn</span>
-                                </p>
-                            </div>
-                            <div class="room-capacity ml-auto">
-                                @if (room.RoomType != null)
-                                {
-                                    <p>Sức chứa: @room.RoomType.Adults người lớn @room.RoomType.Children trẻ em</p>
-                                }
-                                else
-                                {
-                                    <p>Sức chứa: 0 người</p>
-                                }
-                            </div>
-                            <input type="hidden" name="roomId" value="@room.Id" />
-                            <ul class="btnRoom" style="list-style-type: none;">
-                                <li>
-                                    <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng ngay</button>
-                                </li>
-                                <li class="mt-2">
-                                    <button type="submit" class="btn btn-danger text-uppercase px-4" name="action" value="addToCart" onclick="return validateForm()">Thêm vào giỏ hàng</button>
-                                </li>
-                            </ul>
-                        </div>
-                    }
-                }
+            <div class="rooms mt-3">
+                <table class="room-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Loại chỗ nghỉ</th>
+                            <th scope="col">Mô tả</th>
+                            <th scope="col">Số lượng khách</th>
+                            <th scope="col">Giá hôm nay</th>
+                            <th scope="col">Chọn phòng</th>
+                            <th scope="col">Đặt ngay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var roomType in Model.RoomTypes)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="room-info">
+                                        <a>@roomType.Name</a>
+                                        <img src="@roomType.ImageUrl" alt="Room Image" width="150" height="100">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="room-description">
+                                        <p>@roomType.Description</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="room-capacity">
+                                        @if (roomType.TotalGuests != null)
+                                        {
+                                            <p>
+                                                @for (int i = 0; i < roomType.TotalGuests; i++)
+                                                {
+                                                    <i class="fas fa-user"></i>
+                                                }
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p>Sức chứa: 0 <i class="fas fa-user"></i></p>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="room-price">
+                                        <p>@roomType.PricePerNight.ToString("#,##0") VNĐ</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="room-select">
+                                        <select name="quantity">
+                                            @{
+                                                var roomCounts = ViewData["RoomCounts"] as Dictionary<int, int>;
+                                                if (roomCounts != null)
+                                                {
+                                                    if (roomCounts.ContainsKey(roomType.Id))
+                                                    {
+                                                        var count = roomCounts[roomType.Id];
+                                                        for (int i = 0; i <= count; i++)
+                                                        {
+                                                            <option value="@i">@i</option>
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="room-booking">
+                                        <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng ngay</button>
+                                        <button class="btn btn-light border border-danger rounded ml-2 mt-2">
+                                            <span style="color: red;">&#9829; Lưu vào danh sách</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </form>
     </div>
@@ -517,150 +630,177 @@
         }
 
     </script>
-    <!--Đánh giá-->
-    <div class="rating-section">
-        <div>
-            <h3 class="text-center mb-4">ĐÁNH GIÁ GAME SEA OF THIEVES SEASON 12 (46 ĐÁNH GIÁ)</h3>
-            @foreach (var avenRating in Model.Reviews)
+    <!--Rating-->
+    <div class="rating-section pt-3">
+        <h3 class="text-center mb-4">Đánh giá @Model.Name</h3>
+        <div class="container">
+            @if (Model.Reviews != null && Model.Reviews.Any())
             {
-                <div class="rating-container">
-                    <div class="rating-circle">
-                        <span class="rating-score"><h5>@avenRating.CalculateAverageRating().ToString()</h5></span>
-                        <span class="rating-text">Hay Đây</span>
+                var totalService = 0;
+                var totalFacilities = 0;
+                var totalComfort = 0;
+                var totalCleanliness = 0;
+                var totalLocation = 0;
+                var totalCount = Model.Reviews.Count();
+
+                foreach (var avenRating in Model.Reviews)
+                {
+                    totalService += avenRating.Service;
+                    totalFacilities += avenRating.Facilities;
+                    totalComfort += avenRating.Comfort;
+                    totalCleanliness += avenRating.Cleanliness;
+                    totalLocation += avenRating.Location;
+                }
+
+                var averageService = totalService / totalCount;
+                var averageFacilities = totalFacilities / totalCount;
+                var averageComfort = totalComfort / totalCount;
+                var averageCleanliness = totalCleanliness / totalCount;
+                var averageLocation = totalLocation / totalCount;
+
+                <div class="row">
+                    <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <div class="average-rating">
+                            <div class="circle-border">
+                                <span class="rating-score">@((averageService + averageFacilities + averageComfort + averageCleanliness + averageLocation) / 5)</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="rating-bars">
-                        <div class="rating-bar">
-                            <span class="rating-label">Cốt Truyện</span>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Service;" aria-valuenow="@avenRating.Service" aria-valuemin="0" aria-valuemax="10">@avenRating.Service</div>
+                    <div class="col-md-8">
+                        <div class="rating-criteria">
+                            <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
+                                <span class="rating-label font-weight-bold">Dịch vụ</span>
+                                <div class="progress flex-grow-1 mx-3">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: @(averageService * 10)%;" aria-valuenow="@(averageService * 10)" aria-valuemin="0" aria-valuemax="100">@averageService</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="rating-bar">
-                            <span class="rating-label">Gameplay</span>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Facilities;" aria-valuenow="@avenRating.Facilities" aria-valuemin="0" aria-valuemax="10">@avenRating.Facilities</div>
+                            <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
+                                <span class="rating-label font-weight-bold">Tiện nghi</span>
+                                <div class="progress flex-grow-1 mx-3">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageFacilities * 10)%;" aria-valuenow="@(averageFacilities * 10)" aria-valuemin="0" aria-valuemax="100">@averageFacilities</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="rating-bar">
-                            <span class="rating-label">Đồ Họa</span>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Comfort;" aria-valuenow="@avenRating.Comfort" aria-valuemin="0" aria-valuemax="10">@avenRating.Comfort</div>
+                            <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
+                                <span class="rating-label font-weight-bold">Sạch sẽ</span>
+                                <div class="progress flex-grow-1 mx-3">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: @(averageComfort * 10)%;" aria-valuenow="@(averageComfort * 10)" aria-valuemin="0" aria-valuemax="100">@averageComfort</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="rating-bar">
-                            <span class="rating-label">Âm Thanh</span>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Cleanliness;" aria-valuenow="@avenRating.Cleanliness" aria-valuemin="0" aria-valuemax="10">@avenRating.Cleanliness</div>
+                            <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
+                                <span class="rating-label font-weight-bold">Thoải mái</span>
+                                <div class="progress flex-grow-1 mx-3">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: @(averageCleanliness * 10)%;" aria-valuenow="@(averageCleanliness * 10)" aria-valuemin="0" aria-valuemax="100">@averageCleanliness</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="rating-bar">
-                            <span class="rating-label">Đánh Giá Tổng Thể</span>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: @avenRating.Location;" aria-valuenow="@avenRating.Location" aria-valuemin="0" aria-valuemax="10">@avenRating.Location</div>
+                            <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
+                                <span class="rating-label font-weight-bold">Địa điểm</span>
+                                <div class="progress flex-grow-1 mx-3">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: @(averageLocation * 10)%;" aria-valuenow="@(averageLocation * 10)" aria-valuemin="0" aria-valuemax="100">@averageLocation</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             }
         </div>
-    </div>
-    <div>
-        <form asp-controller="Hotel" asp-action="AddReview" method="post">
-            <input type="hidden" name="hotelId" value="@Model.Id" />
-            <div class="rating-container">
-                <div class="rating-item">
-                    <div class="rating-label">Dịch vụ:</div>
-                    <div class="rating-stars">
-                        @for (int i = 2; i <= 10; i += 2)
-                        {
-                            <input type="radio" id="story-@i" name="Service" value="@i">
-                            <label for="story-@i">@i</label>
-                        }
+        <div class="rating-post">
+            <form asp-controller="Hotel" asp-action="AddReview" method="post">
+                <input type="hidden" name="hotelId" value="@Model.Id" />
+                <div class="rating-container">
+                    <div class="rating-item">
+                        <div class="rating-label">Dịch vụ:</div>
+                        <div class="rating-stars">
+                            @for (int i = 2; i <= 10; i += 2)
+                            {
+                                <input type="radio" id="story-@i" name="Service" value="@i">
+                                <label for="story-@i">@i</label>
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <div class="rating-item">
-                    <div class="rating-label">Tiện nghi:</div>
-                    <div class="rating-stars">
-                        @for (int i = 2; i <= 10; i += 2)
-                        {
-                            <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
-                            <label for="gameplay-@i">@i</label>
-                        }
+                    <div class="rating-item">
+                        <div class="rating-label">Tiện nghi:</div>
+                        <div class="rating-stars">
+                            @for (int i = 2; i <= 10; i += 2)
+                            {
+                                <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
+                                <label for="gameplay-@i">@i</label>
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <div class="rating-item">
-                    <div class="rating-label">Sạch sẽ:</div>
-                    <div class="rating-stars">
-                        @for (int i = 2; i <= 10; i += 2)
-                        {
-                            <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
-                            <label for="graphics-@i">@i</label>
-                        }
+                    <div class="rating-item">
+                        <div class="rating-label">Sạch sẽ:</div>
+                        <div class="rating-stars">
+                            @for (int i = 2; i <= 10; i += 2)
+                            {
+                                <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
+                                <label for="graphics-@i">@i</label>
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <div class="rating-item">
-                    <div class="rating-label">Thoải mái:</div>
-                    <div class="rating-stars">
-                        @for (int i = 2; i <= 10; i += 2)
-                        {
-                            <input type="radio" id="sound-@i" name="Comfort" value="@i">
-                            <label for="sound-@i">@i</label>
-                        }
+                    <div class="rating-item">
+                        <div class="rating-label">Thoải mái:</div>
+                        <div class="rating-stars">
+                            @for (int i = 2; i <= 10; i += 2)
+                            {
+                                <input type="radio" id="sound-@i" name="Comfort" value="@i">
+                                <label for="sound-@i">@i</label>
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <div class="rating-item">
-                    <div class="rating-label">Địa điểm:</div>
-                    <div class="rating-stars">
-                        @for (int i = 2; i <= 10; i += 2)
-                        {
-                            <input type="radio" id="overall-@i" name="Location" value="@i">
-                            <label for="overall-@i">@i</label>
-                        }
+                    <div class="rating-item">
+                        <div class="rating-label">Địa điểm:</div>
+                        <div class="rating-stars">
+                            @for (int i = 2; i <= 10; i += 2)
+                            {
+                                <input type="radio" id="overall-@i" name="Location" value="@i">
+                                <label for="overall-@i">@i</label>
+                            }
+                        </div>
                     </div>
+                    <button type="submit" class="submit-btn">Gửi đánh giá</button>
                 </div>
-                <button type="submit" class="submit-btn">Gửi đánh giá</button>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
     </div>
     <!--Comment-->
     <div class="comment-section">
-        <!--Comment Form-->
-        <form asp-controller="Hotel" asp-action="AddComment" method="post" class="mb-4">
-            <input type="hidden" name="hotelId" value="@Model.Id" />
-            <div class="form-group">
-                <label for="comment">Nhận xét của bạn:</label>
-                <textarea class="form-control" id="comment" name="Content" rows="3" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Gửi nhận xét</button>
-        </form>
+        <div class="container">
+            <!--Comment Form-->
+            <form asp-controller="Hotel" asp-action="AddComment" method="post" class="mb-4">
+                <input type="hidden" name="hotelId" value="@Model.Id" />
+                <div class="form-group">
+                    <label for="comment">Nhận xét của bạn:</label>
+                    <textarea class="form-control" id="comment" name="Content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Gửi nhận xét</button>
+            </form>
 
-        <!--Comment List-->
-        <div class="comment-list">
-            <h3 class="mb-3">Tất cả nhận xét:</h3>
-            @if (Model.Comments != null && Model.Comments.Any())
-            {
-                @foreach (var comment in Model.Comments)
+            <!--Comment List-->
+            <div class="comment-list">
+                <h3 class="mb-3">Tất cả nhận xét:</h3>
+                @if (Model.Comments != null && Model.Comments.Any())
                 {
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">@comment.User.FullName</h5>
-                            <p class="card-text">@comment.Content</p>
-                            <p class="card-text"><small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy")</small></p>
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">@comment.User.FullName</h5>
+                                <p class="card-text">@comment.Content</p>
+                                <p class="card-text"><small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy")</small></p>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
-            else
-            {
-                <p>Chưa có nhận xét nào.</p>
-            }
+                else
+                {
+                    <p>Chưa có nhận xét nào.</p>
+                }
+            </div>
         </div>
     </div>
-
 </body>
 </html>

@@ -23,47 +23,47 @@ namespace BookingHotel.Controllers
 
         }
         // Thêm các tham số mới vào phương thức AddToCartAsync
-        public async Task<IActionResult> AddToCartAsync(int roomId, DateTime checkInDate, DateTime checkOutDate, int adults, int children)
-        {
-            Room room = await GetRoomFromDatabaseAsync(roomId);
-            room.RoomType = await _roomTypeRepository.GetByIdAsync(roomId);
-            if (room != null)
-            {
-                decimal nights = 0;
-                decimal total = 0;
-                if ((checkOutDate - checkInDate).Days == 0)
-                {
-                    nights = 1;
-                    total = room.PricePerNight * nights;
-                }
-                else
-                {
-                    nights = (checkOutDate - checkInDate).Days;
-                    total = room.PricePerNight * nights;
-                }
+        //public async Task<IActionResult> AddToCartAsync(int roomId, DateTime checkInDate, DateTime checkOutDate, int adults, int children)
+        //{
+        //    Room room = await GetRoomFromDatabaseAsync(roomId);
+        //    room.RoomType = await _roomTypeRepository.GetByIdAsync(roomId);
+        //    if (room != null)
+        //    {
+        //        decimal nights = 0;
+        //        decimal total = 0;
+        //        if ((checkOutDate - checkInDate).Days == 0)
+        //        {
+        //            nights = 1;
+        //            total = room.PricePerNight * nights;
+        //        }
+        //        else
+        //        {
+        //            nights = (checkOutDate - checkInDate).Days;
+        //            total = room.PricePerNight * nights;
+        //        }
 
-                var cartItem = new CartItem
-                {
-                    Id = roomId,
-                    Name = room.RoomType?.Description ?? "Unknown",
-                    Price = total,
-                    Quantity = 1,
-                    ImageUrl = room.Hotel?.ImageUrl ?? "No image",
-                    Adults = adults, // Lưu số người lớn
-                    Children = children, // Lưu số trẻ em
-                    CheckInDate = checkInDate, // Lưu ngày nhận phòng
-                    CheckOutDate = checkOutDate // Lưu ngày trả phòng
-                };
+        //        var cartItem = new CartItem
+        //        {
+        //            Id = roomId,
+        //            Name = room.RoomType?.Description ?? "Unknown",
+        //            Price = total,
+        //            Quantity = 1,
+        //            ImageUrl = room.Hotel?.ImageUrl ?? "No image",
+        //            Adults = adults, // Lưu số người lớn
+        //            Children = children, // Lưu số trẻ em
+        //            CheckInDate = checkInDate, // Lưu ngày nhận phòng
+        //            CheckOutDate = checkOutDate // Lưu ngày trả phòng
+        //        };
 
-                var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
-                cart.AddItem(cartItem);
+        //        var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+        //        cart.AddItem(cartItem);
 
-                HttpContext.Session.SetObjectAsJson("Cart", cart);
+        //        HttpContext.Session.SetObjectAsJson("Cart", cart);
 
-                return RedirectToAction("Index");
-            }
-            return RedirectToAction("Index", "Room");
-        }
+        //        return RedirectToAction("Index");
+        //    }
+        //    return RedirectToAction("Index", "Room");
+        //}
 
 
         public IActionResult Index()
@@ -142,38 +142,38 @@ namespace BookingHotel.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CheckoutNow(int roomId, DateTime checkInDate, DateTime checkOutDate, int adults, int children, Booking booking)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+        //public async Task<IActionResult> CheckoutNow(int roomId, DateTime checkInDate, DateTime checkOutDate, int adults, int children, Booking booking)
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (user == null)
+        //    {
+        //        return RedirectToAction("Login", "Account");
+        //    }
 
-            var room = await _roomRepository.GetByIdAsync(roomId);
-            if (room == null)
-            {
-                return NotFound();
-            }
+        //    var room = await _roomRepository.GetByIdAsync(roomId);
+        //    if (room == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            booking.UserId = user.Id;
+        //    booking.UserId = user.Id;
 
-            var bookingRoom = new BookingRoom
-            {
-                RoomId = roomId,
-                Total = CalculateTotal(checkInDate, checkOutDate, room.PricePerNight),
-                Adults = adults,
-                Children = children,
-                CheckInDate = checkInDate,
-                CheckOutDate = checkOutDate
-            };
+        //    var bookingRoom = new BookingRoom
+        //    {
+        //        RoomId = roomId,
+        //        Total = CalculateTotal(checkInDate, checkOutDate, room.PricePerNight),
+        //        Adults = adults,
+        //        Children = children,
+        //        CheckInDate = checkInDate,
+        //        CheckOutDate = checkOutDate
+        //    };
 
-            booking.BookingRooms = new List<BookingRoom> { bookingRoom };
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+        //    booking.BookingRooms = new List<BookingRoom> { bookingRoom };
+        //    _context.Bookings.Add(booking);
+        //    await _context.SaveChangesAsync();
 
-            return RedirectToAction("BookingConfirmation", new { id = booking.Id });
-        }
+        //    return RedirectToAction("BookingConfirmation", new { id = booking.Id });
+        //}
         private decimal CalculateTotal(DateTime checkInDate, DateTime checkOutDate, decimal pricePerNight)
         {
             var nights = (checkOutDate - checkInDate).Days;

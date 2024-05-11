@@ -7,7 +7,7 @@
 <h2>Room List</h2>
 
 <p>
-    <a asp-action="Add" asp-controller="Room" asp-route-hotelId="@ViewData["HotelId"]" class="btn btn-primary">Add Room</a>
+    <a asp-action="Add" asp-controller="Room" asp-route-roomTypeId="@ViewBag.roomTypeId" class="btn btn-primary">Add Room</a>
 </p>
 
 <div class="row">
@@ -17,13 +17,10 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Room Number: @room.RoomNumber</h5>
-                    <p class="card-text">Room Type: @room.RoomType.Description</p>
-                    <p class="card-text">Price Per Night: @room.PricePerNight</p>
-                    <p>@(room.IsAvailable)</p>
+                    <p>@room.IsAvailable</p>
                     <div class="card-footer" role="group" aria-label="Room Actions">
                         <a asp-action="Update" asp-route-id="@room.Id" class="btn btn-secondary btn-sm">Edit</a>
                         <a asp-action="Delete" asp-route-id="@room.Id" class="btn btn-danger btn-sm">Delete</a>
-                        <a asp-action="AddAmenitiesToRoom" asp-route-id="@room.Id" class="btn btn-info btn-sm text-white">Amenity</a>
                     </div>
                 </div>
             </div>

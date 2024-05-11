@@ -6,22 +6,13 @@
 
 <h2>Add Room</h2>
 
-<form asp-action="Add" asp-controller="Room" method="post">
+<form asp-action="Add" asp-controller="Room" method="post" asp-route-roomTypeId="@ViewBag.RoomTypeId">
     <div class="form-group">
         <label asp-for="RoomNumber"></label>
         <input asp-for="RoomNumber" class="form-control" />
         <span asp-validation-for="RoomNumber" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="RoomTypeId">RoomTypes</label>
-        <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypes" class="form-control"></select>
-    </div>
-    <div class="form-group">
-        <label asp-for="PricePerNight"></label>
-        <input asp-for="PricePerNight" class="form-control" />
-        <span asp-validation-for="PricePerNight" class="text-danger"></span>
-    </div>
     <input type="hidden" asp-for="IsAvailable" value="false" />
-    <input type="hidden" asp-for="HotelId" value="@ViewBag.HotelId" />
+    <input type="hidden" asp-for="RoomTypeId" value="@ViewBag.RoomTypeId" />
     <button type="submit" class="btn btn-primary mt-3">Add</button>
 </form>

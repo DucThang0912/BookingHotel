@@ -6,7 +6,7 @@ namespace BookingHotel.Repositories
     {
         Task<IEnumerable<Room>> GetAllAsync();
         Task<Room> GetByIdAsync(int id);
-        Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int hotelId, bool includeRoomType = false);
+        Task<List<Room>> GetRoomsByRoomTypeIdAsync(int roomTypeId);
         Task AddAsync(Room room);
         Task UpdateAsync(Room room);
         Task DeleteAsync(int id);
