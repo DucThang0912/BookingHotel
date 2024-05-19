@@ -40,6 +40,13 @@ namespace BookingHotel.Repositories
         {
             return await _context.RoomTypeImages.Where(rti => rti.Id == id).ToListAsync();
         }
+        public async Task<List<RoomTypeImage>> GetRoomTypeImagesByRoomTypeIdAsync(int roomTypeId)
+        {
+            return await _context.RoomTypeImages
+                .Where(rti => rti.RoomTypeId == roomTypeId)
+                .ToListAsync();
+        }
+
         public async Task UpdateAsync(RoomType roomType)
         {
             _context.RoomTypes.Update(roomType);
@@ -60,6 +67,15 @@ namespace BookingHotel.Repositories
 
             return count;
         }
+        public IEnumerable<RoomType> FilterRooms(DateTime checkInDate, DateTime checkOutDate, int adults, int children, int hotelId)
+        {
+            int totalGuests = adults + (int)Math.Ceiling(children / 2.0);
 
+            var filteredRoomTypes = _context.RoomTypes
+                .Where(rt => rt.HotelId == hotelId && rt.TotalGuests >= totalGuests)
+                .ToList();
+
+            return filteredRoomTypes;
+        }
     }
 }

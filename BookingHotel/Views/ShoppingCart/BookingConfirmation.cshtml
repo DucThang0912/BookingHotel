@@ -7,12 +7,12 @@
     <p>Your booking ID is: <strong>@Model.Id</strong></p>
     <h3>Booking Details:</h3>
     <ul>
-        @foreach (var bookingRoom in Model.BookingRooms)
+        @* @foreach (var bookingRoom in Model.BookingRooms)
         {
             <li>
                 Room: @bookingRoom.Room.RoomNumber, @bookingRoom.Room.RoomType.Description - Total: $@bookingRoom.Total
             </li>
-        }
+        } *@
     </ul>
     <p>Please keep this booking ID for your reference.</p>
     <p>We look forward to seeing you!</p>

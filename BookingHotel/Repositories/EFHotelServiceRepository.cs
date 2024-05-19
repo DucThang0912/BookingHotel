@@ -28,6 +28,15 @@ namespace BookingHotel.Repositories
 
             return serviceIds;
         }
+
+        public async Task<IEnumerable<Service>> GetListServicesByHotelIdAsync(int hotelId)
+        {
+            return await _context.HotelServices
+                .Where(hs => hs.HotelId == hotelId)
+                .Select(hs => hs.Service)
+                .ToListAsync();
+        }
+
         public async Task AddAsync(HotelService hotelService)
         {
             _context.HotelServices.Add(hotelService);

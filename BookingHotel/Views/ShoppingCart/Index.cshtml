@@ -21,7 +21,7 @@ else
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        @* <tbody>
             @foreach (var item in Model.Items)
             {
                 <tr>
@@ -40,11 +40,11 @@ else
                     </td>
                 </tr>
             }
-        </tbody>
+        </tbody> *@
     </table>
 
-    <div class="text-right">
+   @*  <div class="text-right">
         <h4>Total: @string.Format("{0:C0}", Model.Items.Sum(i => i.Price * i.Quantity)) VND</h4> <!-- Tổng cộng và thêm VND -->
         <a class="btn btn-info" asp-action="Checkout">Thanh toán</a>
-    </div>
+    </div> *@
 }

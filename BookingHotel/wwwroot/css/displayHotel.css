@@ -1,0 +1,385 @@
+﻿/*MenuGroup*/
+.menuGroup {
+    width: 100%;
+    border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
+}
+
+    .menuGroup th {
+        padding: 10px 20px; /* Khoảng cách giữa chữ và viền của mỗi ô */
+        text-align: center; /* Căn giữa nội dung trong ô */
+    }
+
+        .menuGroup th a {
+            position: relative;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+            .menuGroup th a::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: -5px; /* Điều chỉnh khoảng cách giữa gạch và chữ */
+                width: 100%;
+                height: 3px; /* Độ dài của gạch */
+                border-radius: 2px;
+                background-color: #008080;
+                transition: width 0.3s;
+                transform: scaleX(0); /* Ẩn gạch ban đầu */
+            }
+
+            .menuGroup th a:hover::after,
+            .menuGroup th a:focus::after {
+                transform: scaleX(1); /* Hiển thị gạch khi hover hoặc focus */
+            }
+
+.horizontal-line {
+    height: 2px;
+    background-color: #ccc;
+    margin-bottom: 10px;
+}
+
+/*Image Hotel*/
+.image-gallery-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    max-width: 1200px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main-image-container {
+    flex: 1;
+    width: 40%;
+    height: 310px;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.main-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.sub-image-container {
+    flex: 1;
+    width: 60%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.sub-image {
+    width: 100%;
+    height: 150px;
+    border-radius: 16px;
+    object-fit: cover;
+}
+/* CSS styles for modal box and backdrop */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 70%;
+    height: 80%;
+    overflow-y: auto;
+}
+
+.modal-close {
+    width: 90%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.close {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+    .close:hover {
+        background-color: red;
+        color: white;
+    }
+
+.modal-image {
+    width: 30%;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.modal-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/*--------------book--------*/
+.flex {
+    display: flex;
+    padding-right: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 30px;
+}
+
+.book {
+    width: 100%;
+    color: white;
+    background: #242e5a;
+}
+
+    .book .input {
+        padding: 20px 20px 40px 20px;
+    }
+
+    .book .search {
+        background: #3f9cc1;
+        padding: 20px;
+    }
+
+.flex input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    background: #263760;
+    margin-top: 20px;
+    color: white;
+}
+
+::placeholder {
+    color: white;
+}
+
+.book .search {
+    width: 20%;
+}
+
+    .book .search input {
+        background: none;
+        border: none;
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 35px;
+    }
+
+/*--------------RoomHotel--------*/
+.roomHotel {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.room-table {
+    width: 100%;
+}
+
+.room-table th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    background-color: #242e5a;
+    color: white;
+}
+
+.room-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.room-table th,
+.room-table td {
+    font-size: 14px; /* Set font size to 14px */
+}
+
+.room-price {
+    text-align: center;
+}
+
+.room-capacity {
+    text-align: center;
+}
+
+.room-select {
+    text-align: center;
+}
+
+.room-booking {
+
+}
+/*------Rooms--------*/
+.roomHotel .rooms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/*--------Rating------*/
+
+.rating-section {
+    margin: 30px 10px; /* Thêm margin 10px cho toàn bộ rating section */
+    border: 1px solid #ccc; /* Tạo viền bao quanh rating section */
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.progress {
+    max-width: 500px; /* Giới hạn chiều rộng tối đa của rating-container */
+    margin: 0 auto; /* Căn giữa rating-container */
+}
+
+.average-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle-border {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 10px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.rating-criteria {
+    /* Không cần định kiểu cho phần hiển thị các tiêu chí đánh giá */
+}
+
+.rating-post {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    background-color: #003366;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 40%;
+}
+
+.rating-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Thêm dòng này để căn hai phần tử ở hai đầu */
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.rating-label {
+    font-weight: bold;
+    text-align: left;
+}
+
+.rating-stars {
+    display: flex;
+    justify-content: flex-end;
+}
+
+    .rating-stars input[type="radio"] {
+        display: none;
+    }
+
+    .rating-stars label {
+        cursor: pointer;
+        padding: 5px 10px;
+        background-color: gray;
+        color: #fff;
+        border-radius: 5px;
+        margin-right: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .rating-stars input[type="radio"]:checked + label {
+        background-color: #ff6600;
+    }
+
+.submit-btn {
+    background-color: #17a2b8;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: center;
+}
+
+/*Comment*/
+.comment-section {
+    margin-top: 20px;
+    border: 10px;
+    border-color: black;
+}
+
+.comment-list {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+    .comment-list .card {
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .comment-list .card-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .comment-list .card-text {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .comment-list .text-muted {
+        font-size: 14px;
+    }

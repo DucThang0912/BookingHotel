@@ -13,17 +13,23 @@ namespace BookingHotel.Controllers
     public class HotelController : Controller
     {
         private readonly IHotelRepository _hotelRepository;
+        private readonly IHotelServiceRepository _hotelServiceRepository;
+        private readonly IServiceRepository _serviceRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IRegionRepository _regionRepository;
         private readonly IRoomTypeRepository _roomTypeRepository;
+        private readonly IRoomAmenityRepository _roomAmenityRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-        public HotelController(IHotelRepository hotelRepository, IRoomRepository roomRepository, IRegionRepository regionRepository, IRoomTypeRepository roomTypeRepository, IReviewRepository reviewRepository, ICommentRepository commentRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public HotelController(IHotelRepository hotelRepository, IHotelServiceRepository hotelServiceRepository, IServiceRepository serviceRepository, IRoomRepository roomRepository, IRoomAmenityRepository roomAmenityRepository, IRegionRepository regionRepository, IRoomTypeRepository roomTypeRepository, IReviewRepository reviewRepository, ICommentRepository commentRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _hotelRepository = hotelRepository;
+            _hotelServiceRepository = hotelServiceRepository;
+            _serviceRepository = serviceRepository;
             _roomRepository = roomRepository;
+            _roomAmenityRepository = roomAmenityRepository;
             _regionRepository = regionRepository;
             _roomTypeRepository = roomTypeRepository;
             _reviewRepository = reviewRepository;
@@ -49,6 +55,17 @@ namespace BookingHotel.Controllers
             var hotel = await _hotelRepository.GetByIdAsync(id);
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(id);
             var roomTypes = await _roomTypeRepository.GetRoomTypesByHotelIdAsync(id);
+            var amenities = new Dictionary<int, ICollection<RoomAmenity>>();
+
+            foreach (var roomType in roomTypes)
+            {
+                var roomAmenities = await _roomAmenityRepository.GetRoomAmenitiesByRoomTypeIdAsync(roomType.Id);
+                amenities.Add(roomType.Id, roomAmenities);
+            }
+
+            var service = await _serviceRepository.GetAllAsync();
+            var selectedServices = await _hotelServiceRepository.GetListServicesByHotelIdAsync(id);
+
             hotel.Images = hotelImages;
             hotel.RoomTypes = roomTypes.ToList();
 
@@ -66,10 +83,14 @@ namespace BookingHotel.Controllers
             hotel.Reviews = reviews;
 
             // Truyền dữ liệu sang view
+            ViewBag.SelectedServices = selectedServices;
+            ViewBag.Service = service;
             ViewData["Comments"] = comments;
             ViewData["RoomCounts"] = roomCounts; // Truyền số lượng phòng của mỗi loại phòng
+            ViewData["Amenities"] = amenities;   // Truyền danh sách amenities cho từng room type
             var user = await _userManager.GetUserAsync(User);
             ViewBag.FullName = user.FullName;
+            ViewBag.UserManager = _userManager;
 
             return View(hotel);
         }
@@ -118,6 +139,15 @@ namespace BookingHotel.Controllers
 
             // Chuyển hướng về trang chi tiết hotel
             return RedirectToAction("Display", new { id = hotelId });
+        }
+
+        public IActionResult FilterRooms(DateTime checkInDate, DateTime checkOutDate, int adults, int children, int roomId)
+        {
+            // Lọc danh sách phòng dựa trên các điều kiện lọc
+            var filteredRooms = _roomTypeRepository.FilterRooms(checkInDate, checkOutDate, adults, children, roomId);
+
+            // Trả về danh sách phòng đã lọc dưới dạng partial view
+            return PartialView("_RoomListPartial", filteredRooms);
         }
     }
 }

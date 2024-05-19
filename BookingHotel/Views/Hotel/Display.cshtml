@@ -1,4 +1,5 @@
 ﻿@model BookingHotel.Models.Hotel
+@using Microsoft.AspNetCore.Identity
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,368 +9,13 @@
     <title>@Model.Name - Hotel Gallery</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/displayHotel.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="slick/slick-theme.css" />
 
-    <style>
-        /*MenuGroup*/
-        .menuGroup {
-            width: 100%;
-            border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
-        }
+    <input type="hidden" id="modelId" value="@Model.Id" />
+    <input type="hidden" id="bookingNowUrl" value="@Url.Action("BookingNow", "Booking")" />
 
-            .menuGroup th {
-                padding: 10px 20px; /* Khoảng cách giữa chữ và viền của mỗi ô */
-                text-align: center; /* Căn giữa nội dung trong ô */
-            }
-
-                .menuGroup th a {
-                    position: relative;
-                    text-decoration: none;
-                    color: #333;
-                    font-weight: bold;
-                    transition: color 0.3s;
-                }
-
-                    .menuGroup th a::after {
-                        content: '';
-                        position: absolute;
-                        left: 0;
-                        bottom: -5px; /* Điều chỉnh khoảng cách giữa gạch và chữ */
-                        width: 100%;
-                        height: 3px; /* Độ dài của gạch */
-                        border-radius: 2px;
-                        background-color: #008080;
-                        transition: width 0.3s;
-                        transform: scaleX(0); /* Ẩn gạch ban đầu */
-                    }
-
-                    .menuGroup th a:hover::after,
-                    .menuGroup th a:focus::after {
-                        transform: scaleX(1); /* Hiển thị gạch khi hover hoặc focus */
-                    }
-
-        .horizontal-line {
-            height: 2px;
-            background-color: #ccc;
-            margin-bottom: 10px;
-        }
-
-        /*Image Hotel*/
-        .image-gallery-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            max-width: 1200px;
-            height: auto;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .main-image-container {
-            flex: 1;
-            width: 40%;
-            height: 310px;
-            overflow: hidden;
-            border-radius: 16px;
-        }
-
-        .main-image {
-            width: 100%;
-            height: 100%;
-            border-radius: 16px;
-            object-fit: cover;
-        }
-
-        .sub-image-container {
-            flex: 1;
-            width: 60%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: auto auto;
-            gap: 10px;
-            overflow: hidden;
-        }
-
-        .sub-image {
-            width: 100%;
-            height: 150px;
-            border-radius: 16px;
-            object-fit: cover;
-        }
-        /* CSS styles for modal box and backdrop */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 70%;
-            height: 80%;
-            overflow-y: auto;
-        }
-
-        .modal-close {
-            width: 90%;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .close {
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            background-color: transparent;
-            border: 1px solid black;
-            border-radius: 2px;
-        }
-
-            .close:hover {
-                background-color: red;
-                color: white;
-            }
-
-        .modal-image {
-            width: 30%;
-            padding: 10px;
-            overflow-y: auto;
-        }
-
-        .modal-image {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .modal-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        /*Room Hotel*/
-        /*--------------book--------*/
-        .flex {
-            display: flex;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 30px;
-        }
-
-        .book {
-            width: 100%;
-            height: 20vh;
-            color: white;
-            background: #242e5a;
-        }
-
-            .book .input {
-                padding: 10px 10px 20px 10px;
-            }
-
-            .book .search {
-                background: #3f9cc1;
-                padding: 20px;
-            }
-
-        .flex input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            outline: none;
-            background: #263760;
-            margin-top: 20px;
-            color: white;
-        }
-
-        ::placeholder {
-            color: white;
-        }
-
-        /*--------------RoomHotel--------*/
-        .roomHotel {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        .room-table th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-            background-color: #242e5a;
-            color: white;
-        }
-
-        .room-table td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        .room-table th,
-        .room-table td {
-            font-size: 13px; /* Set font size to 14px */
-        }
-
-        .room-price {
-            text-align: center;
-        }
-
-        .room-capacity {
-            text-align: center;
-        }
-
-        .room-select {
-            text-align: center;
-        }
-        /*--------Rating------*/
-        
-        .rating-section {
-            margin: 30px 10px; /* Thêm margin 10px cho toàn bộ rating section */
-            border: 1px solid #ccc; /* Tạo viền bao quanh rating section */
-            padding: 20px;
-            border-radius: 5px;
-            background-color: darkgray;
-        }
-
-        .progress {
-            max-width: 500px; /* Giới hạn chiều rộng tối đa của rating-container */
-            margin: 0 auto; /* Căn giữa rating-container */
-        }
-
-        .average-rating {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .circle-border {
-            width: 150px; 
-            height: 150px;
-            border-radius: 50%;
-            border: 10px solid black; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        .rating-criteria {
-            /* Không cần định kiểu cho phần hiển thị các tiêu chí đánh giá */
-        }
-
-        .rating-post {
-            display: flex;
-            flex-direction: column;
-            margin: 0 auto;
-            background-color: #003366;
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 40%;
-        }
-
-        .rating-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Thêm dòng này để căn hai phần tử ở hai đầu */
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .rating-label {
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .rating-stars {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-            .rating-stars input[type="radio"] {
-                display: none;
-            }
-
-            .rating-stars label {
-                cursor: pointer;
-                padding: 5px 10px;
-                background-color: gray;
-                color: #fff;
-                border-radius: 5px;
-                margin-right: 5px;
-                transition: background-color 0.3s ease;
-            }
-
-            .rating-stars input[type="radio"]:checked + label {
-                background-color: #ff6600;
-            }
-
-        .submit-btn {
-            background-color: #17a2b8;
-            color: #fff;
-            border: none;
-            width: 100%;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            align-self: center;
-        }
-
-        /*Comment*/
-        .comment-section {
-            margin-top: 20px;
-            border: 10px;
-            border-color: black;
-        }
-
-        .comment-list {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-            .comment-list .card {
-                border: none;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .comment-list .card-title {
-                font-size: 18px;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-
-            .comment-list .card-text {
-                font-size: 16px;
-                line-height: 1.5;
-                margin-bottom: 10px;
-            }
-
-            .comment-list .text-muted {
-                font-size: 14px;
-            }
-
-    </style>
 </head>
 <body>
     <!-- Menu Group -->
@@ -439,10 +85,6 @@
                     <div class="col">
                         <img class="modal-image" src="@image.ImageUrl" alt="Modal Image">
                     </div>
-                    @* @if (++count % 4 == 0)
-            {
-            @:</div><div class="row">
-            } *@
                 }
             }
             else
@@ -474,9 +116,12 @@
                         </div>
                         <div class="box">
                             <label>Trẻ em:</label> <br>
-                            <input type="number" id="children" name="children" placeholder="0" min="0">
+                            <input type="number" id="children" name="children" placeholder="0" min="0" value="0">
                         </div>
                         <input type="hidden" id="roomId" name="roomId" value="@Model.Id">
+                    </div>
+                    <div class="search">
+                        <input type="button" value="Tìm" id="searchButton">
                     </div>
                 </div>
             </div>
@@ -485,7 +130,6 @@
                     <thead>
                         <tr>
                             <th scope="col">Loại chỗ nghỉ</th>
-                            <th scope="col">Mô tả</th>
                             <th scope="col">Số lượng khách</th>
                             <th scope="col">Giá hôm nay</th>
                             <th scope="col">Chọn phòng</th>
@@ -493,18 +137,33 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @{
+                            bool bookingButtonAdded = false;
+                        }
                         @foreach (var roomType in Model.RoomTypes)
                         {
                             <tr>
                                 <td>
                                     <div class="room-info">
-                                        <a>@roomType.Name</a>
-                                        <img src="@roomType.ImageUrl" alt="Room Image" width="150" height="100">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="room-description">
-                                        <p>@roomType.Description</p>
+                                        <a><b>@roomType.Name</b></a>
+                                        <div class="room-images">
+                                            <img src="@roomType.ImageUrl" alt="Room Image" width="150" height="150"> <!-- Ảnh chính -->
+                                        </div>
+                                        <div>
+                                            <ul>
+                                                @{
+                                                    var amenities = ViewData["Amenities"] as Dictionary<int, ICollection<RoomAmenity>>;
+                                                    if (amenities != null && amenities.ContainsKey(roomType.Id))
+                                                    {
+                                                        var roomAmenities = amenities[roomType.Id];
+                                                        foreach (var amenity in roomAmenities)
+                                                        {
+                                                            <li>@amenity.Amenity.Name</li>
+                                                        }
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
@@ -531,7 +190,7 @@
                                 </td>
                                 <td>
                                     <div class="room-select">
-                                        <select name="quantity">
+                                        <select name="quantity_@roomType.Id">
                                             @{
                                                 var roomCounts = ViewData["RoomCounts"] as Dictionary<int, int>;
                                                 if (roomCounts != null)
@@ -549,14 +208,18 @@
                                         </select>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="room-booking">
-                                        <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng ngay</button>
-                                        <button class="btn btn-light border border-danger rounded ml-2 mt-2">
-                                            <span style="color: red;">&#9829; Lưu vào danh sách</span>
-                                        </button>
-                                    </div>
-                                </td>
+                                <input type="hidden" name="roomTypeId_@(roomType.Id)" value="@roomType.Id" />
+                                <input type="hidden" name="roomTypeName_@(roomType.Id)" value="@roomType.Name" />
+                                <input type="hidden" name="roomTypePrice_@(roomType.Id)" value="@roomType.PricePerNight" />
+                                @if (!bookingButtonAdded)
+                                {
+                                    <td rowspan="@Model.RoomTypes.Count()">
+                                        <div class="room-booking">
+                                            <button type="submit" class="btn btn-info text-uppercase px-4" name="action" value="checkoutNow" onclick="return validateForm()">Đặt phòng ngay</button>
+                                        </div>
+                                    </td>
+                                    bookingButtonAdded = true;
+                                }
                             </tr>
                         }
                     </tbody>
@@ -564,72 +227,7 @@
             </div>
         </form>
     </div>
-    <script>
-        function validateForm() {
-            var checkinDate = document.getElementById("checkinDate").value;
-            var checkoutDate = document.getElementById("checkoutDate").value;
-            var adults = document.getElementById("adults").value;
 
-            // Kiểm tra xem các trường đã được nhập hay chưa
-            if (checkinDate === "" || checkoutDate === "" || adults === "") {
-                alert("Vui lòng điền đầy đủ thông tin trước khi thêm vào giỏ hàng hoặc đặt phòng.");
-                return false; // Ngăn form được submit
-            }
-            if (checkinDate > checkoutDate) {
-                alert("Ngày trả phòng không hợp lệ.");
-                return false;
-            }
-            return true; // Cho phép form được submit
-        }
-
-        // JavaScript function to open the modal
-        function openModal() {
-            document.getElementById("myModal").style.display = "block";
-            document.getElementById("modalBackdrop").style.display = "block";
-        }
-
-        // JavaScript function to close the modal
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-            document.getElementById("modalBackdrop").style.display = "none";
-        }
-        function highlightCloseIcon(element) {
-            element.style.backgroundColor = "red";
-        }
-
-        function unhighlightCloseIcon(element) {
-            element.style.backgroundColor = "transparent";
-        }
-
-        function handleFormSubmission(event) {
-            event.preventDefault(); // Ngăn chặn form được gửi đi
-
-            const action = event.submitter.value; // Lấy giá trị của nút được nhấn
-
-            // Lấy giá trị của các trường input từ form và gán vào các trường ẩn
-            const checkinDate = document.getElementById("checkinDate").value;
-            const checkoutDate = document.getElementById("checkoutDate").value;
-            const adults = document.getElementById("adults").value;
-            const children = document.getElementById("children").value;
-
-            // Gán các giá trị vào các trường ẩn trong form
-            document.getElementById("checkinDate").value = checkinDate;
-            document.getElementById("checkoutDate").value = checkoutDate;
-            document.getElementById("adults").value = adults;
-            document.getElementById("children").value = children;
-
-            if (action === 'addToCart') {
-                // Gửi form đến phương thức Checkout trong ShoppingCartController
-                event.currentTarget.action = '@Url.Action("AddToCart", "ShoppingCart")';
-            } else if (action === 'checkoutNow') {
-                // Gửi form đến phương thức CheckoutNow trong ShoppingCartController
-                event.currentTarget.action = '@Url.Action("CheckoutNowForm", "ShoppingCart")';
-            }
-
-            event.currentTarget.submit(); // Gửi form đi
-        }
-
-    </script>
     <!--Rating-->
     <div class="rating-section pt-3">
         <h3 class="text-center mb-4">Đánh giá @Model.Name</h3>
@@ -662,40 +260,40 @@
                     <div class="col-md-4 d-flex justify-content-center align-items-center">
                         <div class="average-rating">
                             <div class="circle-border">
-                                <span class="rating-score">@((averageService + averageFacilities + averageComfort + averageCleanliness + averageLocation) / 5)</span>
+                                <span class="rating-score">@(((averageService + averageFacilities + averageComfort + averageCleanliness + averageLocation) / 5.0).ToString("F1"))</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-8">
                         <div class="rating-criteria">
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
-                                <span class="rating-label font-weight-bold">Dịch vụ</span>
+                                <span class="rating-label font-weight-bold">Dịch vụ:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: @(averageService * 10)%;" aria-valuenow="@(averageService * 10)" aria-valuemin="0" aria-valuemax="100">@averageService</div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageService * 10)%;" aria-valuenow="@(averageService * 10)" aria-valuemin="0" aria-valuemax="100">@averageService</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
-                                <span class="rating-label font-weight-bold">Tiện nghi</span>
+                                <span class="rating-label font-weight-bold">Tiện nghi:</span>
                                 <div class="progress flex-grow-1 mx-3">
                                     <div class="progress-bar bg-info" role="progressbar" style="width: @(averageFacilities * 10)%;" aria-valuenow="@(averageFacilities * 10)" aria-valuemin="0" aria-valuemax="100">@averageFacilities</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
-                                <span class="rating-label font-weight-bold">Sạch sẽ</span>
+                                <span class="rating-label font-weight-bold">Sạch sẽ:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: @(averageComfort * 10)%;" aria-valuenow="@(averageComfort * 10)" aria-valuemin="0" aria-valuemax="100">@averageComfort</div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageComfort * 10)%;" aria-valuenow="@(averageComfort * 10)" aria-valuemin="0" aria-valuemax="100">@averageComfort</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
-                                <span class="rating-label font-weight-bold">Thoải mái</span>
+                                <span class="rating-label font-weight-bold">Thoải mái:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-danger" role="progressbar" style="width: @(averageCleanliness * 10)%;" aria-valuenow="@(averageCleanliness * 10)" aria-valuemin="0" aria-valuemax="100">@averageCleanliness</div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageCleanliness * 10)%;" aria-valuenow="@(averageCleanliness * 10)" aria-valuemin="0" aria-valuemax="100">@averageCleanliness</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
-                                <span class="rating-label font-weight-bold">Địa điểm</span>
+                                <span class="rating-label font-weight-bold">Địa điểm:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: @(averageLocation * 10)%;" aria-valuenow="@(averageLocation * 10)" aria-valuemin="0" aria-valuemax="100">@averageLocation</div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageLocation * 10)%;" aria-valuenow="@(averageLocation * 10)" aria-valuemin="0" aria-valuemax="100">@averageLocation</div>
                                 </div>
                             </div>
                         </div>
@@ -788,7 +386,12 @@
                     {
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h5 class="card-title">@comment.User.FullName</h5>
+                                @if (!string.IsNullOrEmpty(comment.UserId))
+                                {
+                                    var userManager = ViewBag.UserManager as UserManager<ApplicationUser>;
+                                    var commentUser = await userManager.FindByIdAsync(comment.UserId);
+                                    <h5 class="card-title">@commentUser.FullName</h5>
+                                }
                                 <p class="card-text">@comment.Content</p>
                                 <p class="card-text"><small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy")</small></p>
                             </div>
@@ -802,5 +405,25 @@
             </div>
         </div>
     </div>
+
+    <!----------Service Hotel------------>
+    @if (ViewBag.SelectedServices != null)
+    {
+        <h3>Dịch vụ của khách sạn:</h3>
+        <ul>
+            @foreach (var service in ViewBag.SelectedServices)
+            {
+                <li>@service.Name</li>
+            }
+        </ul>
+    }
+    <script>
+        const modelId = @Model.Id;
+        const bookingNowUrl = '@Url.Action("BookingNow", "Booking")';
+    </script>
+    <script src="~/js/DisplayHotelJs.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="slick/slick.min.js"></script>
 </body>
 </html>

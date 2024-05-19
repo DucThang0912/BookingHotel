@@ -4,6 +4,7 @@ using BookingHotel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookingHotel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240513064927_FixCartItem")]
+    partial class FixCartItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,40 +119,23 @@ namespace BookingHotel.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
+                    b.Property<string>("OrderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("firstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -158,7 +144,7 @@ namespace BookingHotel.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("BookingHotel.Models.BookingDetail", b =>
+            modelBuilder.Entity("BookingHotel.Models.BookingRoom", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -166,7 +152,7 @@ namespace BookingHotel.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Adults")
+                    b.Property<int>("Adults")
                         .HasColumnType("int");
 
                     b.Property<int>("BookingId")
@@ -178,13 +164,10 @@ namespace BookingHotel.Migrations
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Children")
+                    b.Property<int>("Children")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomTypeId")
+                    b.Property<int>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Total")
@@ -194,9 +177,9 @@ namespace BookingHotel.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.HasIndex("RoomTypeId");
+                    b.HasIndex("RoomId");
 
-                    b.ToTable("BookingsDetail");
+                    b.ToTable("BookingRoom");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.CartItem", b =>
@@ -668,23 +651,23 @@ namespace BookingHotel.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BookingHotel.Models.BookingDetail", b =>
+            modelBuilder.Entity("BookingHotel.Models.BookingRoom", b =>
                 {
                     b.HasOne("BookingHotel.Models.Booking", "Booking")
-                        .WithMany("BookingDetails")
+                        .WithMany("BookingRooms")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookingHotel.Models.RoomType", "roomType")
-                        .WithMany()
-                        .HasForeignKey("RoomTypeId")
+                    b.HasOne("BookingHotel.Models.Room", "Room")
+                        .WithMany("BookingRooms")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Booking");
 
-                    b.Navigation("roomType");
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.Comment", b =>
@@ -868,7 +851,7 @@ namespace BookingHotel.Migrations
 
             modelBuilder.Entity("BookingHotel.Models.Booking", b =>
                 {
-                    b.Navigation("BookingDetails");
+                    b.Navigation("BookingRooms");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.Hotel", b =>
@@ -887,6 +870,11 @@ namespace BookingHotel.Migrations
             modelBuilder.Entity("BookingHotel.Models.Region", b =>
                 {
                     b.Navigation("Hotels");
+                });
+
+            modelBuilder.Entity("BookingHotel.Models.Room", b =>
+                {
+                    b.Navigation("BookingRooms");
                 });
 
             modelBuilder.Entity("BookingHotel.Models.RoomType", b =>

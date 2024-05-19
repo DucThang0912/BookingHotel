@@ -27,6 +27,13 @@ namespace BookingHotel.Repositories
 
             return amenityIds;
         }
+        public async Task<ICollection<RoomAmenity>> GetRoomAmenitiesByRoomTypeIdAsync(int roomTypeId)
+        {
+            return await _context.RoomAmenities
+                .Where(ra => ra.RoomTypeId == roomTypeId)
+                .Include(ra => ra.Amenity)
+                .ToListAsync();
+        }
         public async Task AddAsync(RoomAmenity roomAmenity)
         {
             _context.RoomAmenities.Add(roomAmenity);

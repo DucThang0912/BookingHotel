@@ -1,0 +1,100 @@
+﻿@using Newtonsoft.Json
+@model BookingHotel.Models.BookingViewModel
+
+@{
+    ViewData["Title"] = "Booking Now";
+}
+
+<div class="row">
+    <div class="col-md-7">
+        <h2>Booking Information</h2>
+        <form id="bookingForm" asp-action="BookingNow">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Booking.firstName" class="control-label"></label>
+                <input asp-for="Booking.firstName" class="form-control" />
+                <span asp-validation-for="Booking.firstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.LastName" class="control-label"></label>
+                <input asp-for="Booking.LastName" class="form-control" />
+                <span asp-validation-for="Booking.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.Email" class="control-label"></label>
+                <input asp-for="Booking.Email" class="form-control" />
+                <span asp-validation-for="Booking.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.PhoneNumber" class="control-label"></label>
+                <input asp-for="Booking.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Booking.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.Notes" class="control-label">Special Requests</label>
+                <textarea asp-for="Booking.Notes" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="payAtHotel" value="@((int)PaymentMethod.PayAtHotel)" checked>
+                        <label class="form-check-label" for="payAtHotel">Pay at Hotel</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="moMo" value="@((int)PaymentMethod.MoMo)">
+                        <label class="form-check-label" for="moMo">MoMo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="creditCard" value="@((int)PaymentMethod.CreditCard)">
+                        <label class="form-check-label" for="creditCard">Credit Card</label>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="bookingViews" value="@JsonConvert.SerializeObject(ViewBag.BookingViews)" />
+            <div class="form-group">
+                <input type="submit" value="Book Now" class="btn btn-primary" name="action" value="checkoutNow"/>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-5">
+        <h2>Room Details</h2>
+        @if (ViewBag.BookingViews != null && ViewBag.BookingViews.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Room Type</th>
+                        <th>Quantity</th>
+                        <th>Adults</th>
+                        <th>Children</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bookingView in ViewBag.BookingViews)
+                    {
+                        <tr>
+                            <td>@bookingView.RoomTypeId</td>
+                            <td>@bookingView.Quantity</td>
+                            <td>@bookingView.Adults</td>
+                            <td>@bookingView.Children</td>
+                            <td>@bookingView.TotalPrice.ToString("#,##0") VNĐ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No rooms selected.</p>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

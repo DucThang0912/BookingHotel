@@ -10,8 +10,10 @@ namespace BookingHotel.Repositories
         Task AddAsync(RoomType roomType);
         Task AddRoomTypeImageAsync(RoomTypeImage roomTypeImage);
         Task <List<RoomTypeImage>> GetRoomTypeImagesAsync(int id);
+        Task<List<RoomTypeImage>> GetRoomTypeImagesByRoomTypeIdAsync(int roomTypeId);
         Task UpdateAsync(RoomType roomType);
         Task DeleteAsync(int id);
         Task<int> CountRoomByRoomTypeAsync(int id);
+        IEnumerable<RoomType> FilterRooms(DateTime checkInDate, DateTime checkOutDate, int adults, int children, int hotelId);
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using BookingHotel.Data;
 using BookingHotel.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BookingHotel.Controllers
 {
@@ -20,27 +22,80 @@ namespace BookingHotel.Controllers
             _context = context;
             _userManager = userManager;
         }
-
-        public async Task<IActionResult> HistoryAsync()
+        public IActionResult BookingNow(string bookingViews)
         {
-            // Lấy thông tin người dùng hiện tại
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            // Giải mã dữ liệu từ URL
+            var decodedData = HttpUtility.UrlDecode(bookingViews);
 
-            // Kiểm tra xem người dùng đã đăng nhập hay chưa
-            if (user != null)
+            // Chuyển dữ liệu từ chuỗi JSON thành danh sách BookingView
+            var bookingViewsList = JsonConvert.DeserializeObject<List<BookingView>>(decodedData);
+
+            if (bookingViewsList != null && bookingViewsList.Count > 0)
             {
-                // Truy vấn các đơn hàng của người dùng dựa trên UserId
-                var bookings = await _context.Bookings
-                    .Where(o => o.UserId == user.Id)
-                    .ToListAsync();
-
-                return View(bookings);
+                ViewBag.BookingViews = bookingViewsList;
             }
             else
             {
-                // Người dùng chưa đăng nhập, có thể xử lý tùy ý
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Error");
             }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookingNow(BookingViewModel model, string bookingViews)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var booking = new Booking
+            {
+                UserId = user.Id,
+                User = user,
+                firstName = model.Booking.firstName,
+                LastName = model.Booking.LastName,
+                Email = model.Booking.Email,
+                PhoneNumber = model.Booking.PhoneNumber,
+                Notes = model.Booking.Notes,
+                PaymentMethod = model.Booking.PaymentMethod,
+                CreatedAt = DateTime.Now,
+                IsConfirmed = false
+            };
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+
+            // Deserialize bookingViews
+            var bookingViewsList = JsonConvert.DeserializeObject<List<BookingView>>(bookingViews);
+
+            if (bookingViewsList != null)
+            {
+                booking.BookingDetails = new List<BookingDetail>();
+                foreach (var bookingView in bookingViewsList)
+                {
+                    var bookingDetail = new BookingDetail
+                    {
+                        BookingId = booking.Id,
+                        RoomTypeId = bookingView.RoomTypeId,
+                        Quantity = bookingView.Quantity,
+                        Adults = bookingView.Adults,
+                        Children = bookingView.Children,
+                        CheckInDate = bookingView.CheckInDate,
+                        CheckOutDate = bookingView.CheckOutDate,
+                        Total = bookingView.TotalPrice
+                    };
+                    booking.BookingDetails.Add(bookingDetail);
+                }
+            }
+
+            booking.TotalAmount = booking.BookingDetails.Sum(bd => bd.Total);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(BookingConfirmation));
+        }
+
+        public IActionResult BookingConfirmation()
+        {
+            return View();
         }
     }
 }
