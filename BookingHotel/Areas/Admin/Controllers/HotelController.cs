@@ -109,7 +109,10 @@ namespace BookingHotel.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            if (hotel.RegionId != null)
+            {
+                hotel.Region = await _regionRepository.GetByIdAsync(hotel.RegionId);
+            }
             hotel.Images = await _hotelRepository.GetHotelImagesAsync(id);
 
             return View(hotel);

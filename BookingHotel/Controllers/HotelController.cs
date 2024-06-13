@@ -56,6 +56,7 @@ namespace BookingHotel.Controllers
             var hotelImages = await _hotelRepository.GetHotelImagesAsync(id);
             var roomTypes = await _roomTypeRepository.GetRoomTypesByHotelIdAsync(id);
             var amenities = new Dictionary<int, ICollection<RoomAmenity>>();
+            var hotelForRegionByHotelId = await _hotelRepository.GetHotelForRegionByHotelId(id, hotel.RegionId);
 
             foreach (var roomType in roomTypes)
             {
@@ -76,28 +77,36 @@ namespace BookingHotel.Controllers
                 int count = await _roomTypeRepository.CountRoomByRoomTypeAsync(roomType.Id);
                 roomCounts.Add(roomType.Id, count);
             }
-
             // Lấy review và danh sách comment của khách sạn
             var reviews = await _reviewRepository.GetAllReviewsByHotelIdAsync(id);
             var comments = await _commentRepository.GetCommentsByHotelIdAsync(id);
             hotel.Reviews = reviews;
 
             // Truyền dữ liệu sang view
+            ViewBag.HotelForRegionByHotelId = hotelForRegionByHotelId;
             ViewBag.SelectedServices = selectedServices;
             ViewBag.Service = service;
             ViewData["Comments"] = comments;
-            ViewData["RoomCounts"] = roomCounts; // Truyền số lượng phòng của mỗi loại phòng
-            ViewData["Amenities"] = amenities;   // Truyền danh sách amenities cho từng room type
+            ViewData["RoomCounts"] = roomCounts; 
+            ViewData["Amenities"] = amenities;  
             var user = await _userManager.GetUserAsync(User);
-            ViewBag.FullName = user.FullName;
+            if(user != null)
+            {
+                ViewBag.FullName = user.FullName;
+                bool checkReviewOfUser = await _reviewRepository.CheckReviewOfUserAsync(user.Id, id);
+                ViewBag.CheckReviewOfUser = checkReviewOfUser;
+            }
             ViewBag.UserManager = _userManager;
-
             return View(hotel);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddReview(int hotelId, int service, int facilities, int cleanliness, int comfort, int location)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Challenge();
+            }
             // Lấy thông tin người dùng hiện tại
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -122,6 +131,10 @@ namespace BookingHotel.Controllers
         [HttpPost]
         public async Task<IActionResult> AddComment(int hotelId, string content)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Challenge();
+            }
             // Lấy thông tin người dùng hiện tại
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 
@@ -149,5 +162,6 @@ namespace BookingHotel.Controllers
             // Trả về danh sách phòng đã lọc dưới dạng partial view
             return PartialView("_RoomListPartial", filteredRooms);
         }
+
     }
 }

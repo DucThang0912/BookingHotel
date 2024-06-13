@@ -36,5 +36,9 @@ namespace BookingHotel.Repositories
         {
             return await _context.Reviews.Where(r => r.HotelId == hotelId).ToListAsync();
         }
+        public async Task<bool> CheckReviewOfUserAsync(string userId, int hotelId)
+        {
+            return await _context.Reviews.AnyAsync(r => r.UserId == userId && r.HotelId == hotelId);
+        }
     }
 }

@@ -5,96 +5,232 @@
     ViewData["Title"] = "Booking Now";
 }
 
-<div class="row">
-    <div class="col-md-7">
-        <h2>Booking Information</h2>
-        <form id="bookingForm" asp-action="BookingNow">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Booking.firstName" class="control-label"></label>
-                <input asp-for="Booking.firstName" class="form-control" />
-                <span asp-validation-for="Booking.firstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Booking.LastName" class="control-label"></label>
-                <input asp-for="Booking.LastName" class="form-control" />
-                <span asp-validation-for="Booking.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Booking.Email" class="control-label"></label>
-                <input asp-for="Booking.Email" class="form-control" />
-                <span asp-validation-for="Booking.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Booking.PhoneNumber" class="control-label"></label>
-                <input asp-for="Booking.PhoneNumber" class="form-control" />
-                <span asp-validation-for="Booking.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Booking.Notes" class="control-label">Special Requests</label>
-                <textarea asp-for="Booking.Notes" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Payment Method</label>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="payAtHotel" value="@((int)PaymentMethod.PayAtHotel)" checked>
-                        <label class="form-check-label" for="payAtHotel">Pay at Hotel</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="moMo" value="@((int)PaymentMethod.MoMo)">
-                        <label class="form-check-label" for="moMo">MoMo</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="creditCard" value="@((int)PaymentMethod.CreditCard)">
-                        <label class="form-check-label" for="creditCard">Credit Card</label>
-                    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Hotel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .booking-form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .booking-form h2 {
+                color: #333;
+                font-weight: 600;
+                margin-bottom: 30px;
+            }
+
+            .booking-form .form-control {
+                border-radius: 5px;
+            }
+
+            .booking-form .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+                .booking-form .btn-primary:hover {
+                    background-color: #0069d9;
+                    border-color: #0062cc;
+                }
+
+        .room-details {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .room-details h2 {
+                color: #333;
+                font-weight: 600;
+                margin-bottom: 30px;
+            }
+
+            .room-details .table {
+                margin-bottom: 0;
+            }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="booking-form">
+                    <h2>Booking Information</h2>
+                    <form id="bookingForm" asp-action="BookingNow">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="Booking.firstName" class="control-label">Họ và tên đệm</label>
+                                    <input asp-for="Booking.firstName" class="form-control" />
+                                    <span asp-validation-for="Booking.firstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="Booking.LastName" class="control-label">Tên</label>
+                                    <input asp-for="Booking.LastName" class="form-control" />
+                                    <span asp-validation-for="Booking.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Booking.Email" class="control -label">Email</label>
+                            <input asp-for="Booking.Email" class="form-control" />
+                            <span asp-validation-for="Booking.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Booking.PhoneNumber" class="control-label">Số điện thoại</label>
+                            <input asp-for="Booking.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="Booking.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Booking.Notes" class="control-label">Yêu cầu đặc biệt</label>
+                            <textarea asp-for="Booking.Notes" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Phương thức thanh toán</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="payAtHotel" value="@((int)PaymentMethod.PayAtHotel)" checked>
+                                    <label class="form-check-label" for="payAtHotel">Pay at Hotel</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="moMo" value="@((int)PaymentMethod.MoMo)">
+                                    <label class="form-check-label" for="moMo">MoMo</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Booking.PaymentMethod" id="creditCard" value="@((int)PaymentMethod.CreditCard)">
+                                    <label class="form-check-label" for="creditCard">Credit Card</label>
+                                </div>
+                            </div>
+                            <div id="creditCardOptions" class="mt-2" style="display: none;">
+                                <label>Chọn phương thức thanh toán Credit Card:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="CreditCardMethod" id="vnpay" value="vnpay" checked>
+                                    <label class="form-check-label" for="vnpay">VNPAY</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="CreditCardMethod" id="otherCard" value="otherCard">
+                                    <label class="form-check-label" for="otherCard">Thẻ tín dụng khác</label>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="bookingViews" value="@JsonConvert.SerializeObject(ViewBag.BookingViews)" />
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="termsAccepted" required>
+                                <label class="form-check-label" for="termsAccepted">
+                                    Tôi chấp nhận tất cả <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">điều khoản</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <input type="submit" value="Book Now" class="btn btn-primary" name="action" value="checkoutNow" />
+                        </div>
+                    </form>
                 </div>
             </div>
-            <input type="hidden" name="bookingViews" value="@JsonConvert.SerializeObject(ViewBag.BookingViews)" />
-            <div class="form-group">
-                <input type="submit" value="Book Now" class="btn btn-primary" name="action" value="checkoutNow"/>
-            </div>
-        </form>
-    </div>
-    <div class="col-md-5">
-        <h2>Room Details</h2>
-        @if (ViewBag.BookingViews != null && ViewBag.BookingViews.Count > 0)
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Room Type</th>
-                        <th>Quantity</th>
-                        <th>Adults</th>
-                        <th>Children</th>
-                        <th>Total Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var bookingView in ViewBag.BookingViews)
+            <div class="col-md-5">
+                <div class="room-details">
+                    <h2>Room Details</h2>
+                    @if (ViewBag.BookingViews != null && ViewBag.BookingViews.Count > 0)
                     {
-                        <tr>
-                            <td>@bookingView.RoomTypeId</td>
-                            <td>@bookingView.Quantity</td>
-                            <td>@bookingView.Adults</td>
-                            <td>@bookingView.Children</td>
-                            <td>@bookingView.TotalPrice.ToString("#,##0") VNĐ</td>
-                        </tr>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Thể loại phòng</th>
+                                    <th>Số lượng</th>
+                                    <th>Người lớn</th>
+                                    <th>Trẻ em</th>
+                                    <th>Tổng tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var bookingView in ViewBag.BookingViews)
+                                {
+                                    <tr>
+                                        <td>@bookingView.RoomTypeId</td>
+                                        <td>@bookingView.Quantity</td>
+                                        <td>@bookingView.Adults</td>
+                                        <td>@bookingView.Children</td>
+                                        <td>@bookingView.TotalPrice.ToString("#,##0") VNĐ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>No rooms selected.</p>
-        }
+                    else
+                    {
+                        <p>No rooms selected.</p>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
-</div>
+    <!-- Modal cho điều khoản -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Điều khoản và Điều kiện</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Thêm nội dung điều khoản và điều kiện ở đây -->
+                    <p>Bằng cách đánh dấu vào ô "Tôi chấp nhận tất cả điều khoản", bạn đồng ý với các điều khoản và điều kiện của chúng tôi về việc đặt phòng, thanh toán, và chính sách hủy phòng.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('creditCard').addEventListener('change', function () {
+            var creditCardOptions = document.getElementById('creditCardOptions');
+            creditCardOptions.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('payAtHotel').addEventListener('change', function () {
+            var creditCardOptions = document.getElementById('creditCardOptions');
+            creditCardOptions.style.display = 'none';
+        });
+
+        document.getElementById('moMo').addEventListener('change', function () {
+            var creditCardOptions = document.getElementById('creditCardOptions');
+            creditCardOptions.style.display = 'none';
+        });
+
+        document.getElementById('bookingForm').addEventListener('submit', function (event) {
+            var termsAccepted = document.getElementById('termsAccepted');
+            if (!termsAccepted.checked) {
+                event.preventDefault();
+                alert('Vui lòng chấp nhận điều khoản trước khi tiếp tục.');
+            }
+        });
+    </script>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
-}
+</body>
+</html>

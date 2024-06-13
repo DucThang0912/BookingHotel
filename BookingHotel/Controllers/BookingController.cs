@@ -3,22 +3,30 @@ using System.Threading.Tasks;
 using System.Web;
 using BookingHotel.Data;
 using BookingHotel.Models;
+using BookingHotel.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Rotativa.AspNetCore;
 
 namespace BookingHotel.Controllers
 {
     [Authorize]
     public class BookingController : Controller
     {
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingDetailRepository _bookingDetailRepository;
+        private readonly IRoomTypeRepository _roomTypeRepository;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public BookingController(IBookingRepository bookingRepository, IBookingDetailRepository bookingDetailRepository, IRoomTypeRepository roomTypeRepository, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
+            _bookingRepository = bookingRepository;
+            _bookingDetailRepository = bookingDetailRepository;
+            _roomTypeRepository = roomTypeRepository;
             _context = context;
             _userManager = userManager;
         }
@@ -97,5 +105,39 @@ namespace BookingHotel.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> HistoryBooking()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var bookingHistory = await _bookingRepository.GetBookingByUserId(user.Id);
+            return View(bookingHistory);
+        }
+        public async Task<IActionResult> ListBookingDetail(int id)
+        {
+            var bookingDetails = await _bookingDetailRepository.GetBookingDetailByBookingId(id);
+            foreach (var bookingDetail in bookingDetails)
+            {
+                bookingDetail.roomType = await _roomTypeRepository.GetByIdAsync(bookingDetail.RoomTypeId);
+            }
+            return View(bookingDetails);
+        }
+        public async Task<IActionResult> PrintInvoice(int id)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingDetails)
+                .ThenInclude(bd => bd.roomType)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return new ViewAsPdf("PrintInvoice", booking)
+            {
+                FileName = $"HoaDon_{id}.pdf"
+            };
+        }
+
     }
 }

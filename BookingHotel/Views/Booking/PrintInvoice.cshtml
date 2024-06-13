@@ -1,0 +1,130 @@
+﻿@using ZXing
+@{
+    Layout = null;
+
+    // Tạo mã QR
+    var bookingId = Model.Id.ToString();
+    var writer = new ZXing.BarcodeWriterSvg
+            {
+                Format = ZXing.BarcodeFormat.QR_CODE,
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Width = 200,
+                    Height = 200
+                }
+            };
+
+    var qrCodeSvg = writer.Write(bookingId);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hóa đơn đặt phòng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .top {
+            overflow: hidden;
+        }
+
+        .qr-code {
+            float: left;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .booking-info {
+            float: right;
+            margin-top: 40px;
+            margin-right: 30px;
+        }
+
+        .information {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .customer-info {
+            margin-bottom: 10px;
+        }
+
+        .total {
+            margin-top: 20px;
+        }
+
+        .total-amount {
+            float: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table td, table th {
+                padding: 8px;
+                border: 1px solid #ddd;
+            }
+
+            table th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <!-- Mã QR code và Mã đặt phòng, Ngày đặt phòng -->
+        <div class="top">
+            <div class="qr-code">
+                @Html.Raw(qrCodeSvg)
+            </div>
+            <div class="booking-info">
+                Mã Đặt Phòng: @Model.Id<br>
+                Ngày: @Model.CreatedAt.ToString("d MMMM yyyy")
+            </div>
+        </div>
+
+        <!-- Thông tin người đặt -->
+        <div class="information">
+            <div class="customer-info">
+                Họ tên: @Model.firstName @Model.LastName<br>
+                Email: @Model.Email<br>
+                Số điện thoại: @Model.PhoneNumber
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th>Tên phòng</th>
+                <th>Số lượng</th>
+                <th>Ngày nhận phòng</th>
+                <th>Ngày trả phòng</th>
+                <th>Giá tiền</th>
+            </tr>
+            @foreach (var detail in Model.BookingDetails)
+            {
+                <tr>
+                    <td>@detail.roomType?.Name</td>
+                    <td>@detail.Quantity</td>
+                    <td>@detail.CheckInDate.ToString("d")</td>
+                    <td>@detail.CheckOutDate.ToString("d")</td>
+                    <td>@detail.Total.ToString("#,##0") VNĐ</td>
+                </tr>
+            }
+        </table>
+
+        <!-- Phần tổng -->
+        <div class="total">
+            <div class="total-amount">
+                Tổng: @Model.TotalAmount.ToString("#,##0") VNĐ
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

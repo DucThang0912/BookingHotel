@@ -103,4 +103,5 @@ function handleFormSubmission(event) {
         // Chuyển hướng đến trang BookingNow và truyền dữ liệu qua URL
         window.location.href = '/Booking/BookingNow?bookingViews=' + encodedData;
     }
+
 }

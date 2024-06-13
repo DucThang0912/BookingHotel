@@ -10,12 +10,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/displayHotel.css" asp-append-version="true" />
-    <link rel="stylesheet" type="text/css" href="slick/slick.css" />
-    <link rel="stylesheet" type="text/css" href="slick/slick-theme.css" />
-
     <input type="hidden" id="modelId" value="@Model.Id" />
     <input type="hidden" id="bookingNowUrl" value="@Url.Action("BookingNow", "Booking")" />
-
 </head>
 <body>
     <!-- Menu Group -->
@@ -23,17 +19,18 @@
         <table class="menuGroup">
             <thead>
                 <tr>
-                    <th><a href="#">Tổng quan</a></th>
-                    <th><a href="#">Phòng nghỉ</a></th>
-                    <th><a href="#">Tiện nghi</a></th>
-                    <th><a href="#">Đánh giá</a></th>
+                    <th><a href="#overview">Tổng quan</a></th>
+                    <th><a href="#room-hotel">Phòng nghỉ</a></th>
+                    <th><a href="#rating">Đánh giá</a></th>
+                    <th><a href="#comment">Nhận xét</a></th>
+                    <th><a href="#hotel-region">Dịch vụ</a></th>
                 </tr>
             </thead>
         </table>
     </div>
 
     <!--OverView-->
-    <div class="overView mt-4 d-flex">
+    <div id="overview" class="overView mt-4 d-flex">
         <div class="col-sm-6 col-md-8 border border-light-subtle p-3">
             <h2>@Model.Name</h2>
             <p><a href="https://www.google.com/maps/search/?api=1&query=@Model.Name@Model.Address" target="_blank">@Model.Address</a></p>
@@ -96,7 +93,7 @@
     <div id="modalBackdrop" class="modal-backdrop"></div>
 
     <!--Room Hotel-->
-    <div class="roomHotel pt-3">
+    <div id="room-hotel" class="roomHotel pt-3">
         <h2>Các phòng trống tại @Model.Name</h2>
         <form id="bookingForm" onsubmit="return handleFormSubmission(event)">
             <div class="book">
@@ -127,7 +124,7 @@
             </div>
             <div class="rooms mt-3">
                 <table class="room-table">
-                    <thead>
+                    <thead class="taskbar-book">
                         <tr>
                             <th scope="col">Loại chỗ nghỉ</th>
                             <th scope="col">Số lượng khách</th>
@@ -145,25 +142,37 @@
                             <tr>
                                 <td>
                                     <div class="room-info">
-                                        <a><b>@roomType.Name</b></a>
+                                        <h4 class="room-type">@roomType.Name</h4>
                                         <div class="room-images">
-                                            <img src="@roomType.ImageUrl" alt="Room Image" width="150" height="150"> <!-- Ảnh chính -->
+                                            <img src="@roomType.ImageUrl" alt="@roomType.Name" width="200">
                                         </div>
-                                        <div>
-                                            <ul>
+                                        <div class="amenities-section">
+                                            <h5 class="amenities-title">Tiện nghi phòng:</h5>
+                                            <ul class="amenities-list">
                                                 @{
                                                     var amenities = ViewData["Amenities"] as Dictionary<int, ICollection<RoomAmenity>>;
                                                     if (amenities != null && amenities.ContainsKey(roomType.Id))
                                                     {
-                                                        var roomAmenities = amenities[roomType.Id];
-                                                        foreach (var amenity in roomAmenities)
+                                                        var roomAmenities = amenities[roomType.Id].ToList();
+                                                        for (int i = 0; i < Math.Min(6, roomAmenities.Count); i++)
                                                         {
-                                                            <li>@amenity.Amenity.Name</li>
+                                                            <li class="amenity-item">@roomAmenities[i].Amenity.Name</li>
+                                                        }
+                                                        if (roomAmenities.Count > 6)
+                                                        {
+                                                            <li class="more-amenities">
+                                                                <a href="#" class="more-amenities-btn" data-room-type="@roomType.Id">Xem thêm</a>
+                                                            </li>
+                                                            <div class="hidden-amenities" id="amenities-@roomType.Id" style="display: none;">
+                                                                @for (int i = 6; i < roomAmenities.Count; i++)
+                                                                {
+                                                                <li class="amenity-item">@roomAmenities[i].Amenity.Name</li>
+                                                                }
+                                                    </div>
                                                         }
                                                     }
                                                 }
-                                            </ul>
-                                        </div>
+                                        </ul>
                                     </div>
                                 </td>
                                 <td>
@@ -229,8 +238,8 @@
     </div>
 
     <!--Rating-->
-    <div class="rating-section pt-3">
-        <h3 class="text-center mb-4">Đánh giá @Model.Name</h3>
+    <div id="rating" class="rating-section pt-3">
+        <h2 class="text-center mb-4">Đánh giá @Model.Name</h2>
         <div class="container">
             @if (Model.Reviews != null && Model.Reviews.Any())
             {
@@ -262,6 +271,7 @@
                             <div class="circle-border">
                                 <span class="rating-score">@(((averageService + averageFacilities + averageComfort + averageCleanliness + averageLocation) / 5.0).ToString("F1"))</span>
                             </div>
+                            <div class="mt-3 text-center">Điểm trung bình</div>
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -269,39 +279,44 @@
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
                                 <span class="rating-label font-weight-bold">Dịch vụ:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageService * 10)%;" aria-valuenow="@(averageService * 10)" aria-valuemin="0" aria-valuemax="100">@averageService</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @(averageService * 10)%;" aria-valuenow="@(averageService * 10)" aria-valuemin="0" aria-valuemax="100">@averageService</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
                                 <span class="rating-label font-weight-bold">Tiện nghi:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageFacilities * 10)%;" aria-valuenow="@(averageFacilities * 10)" aria-valuemin="0" aria-valuemax="100">@averageFacilities</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @(averageFacilities * 10)%;" aria-valuenow="@(averageFacilities * 10)" aria-valuemin="0" aria-valuemax="100">@averageFacilities</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
                                 <span class="rating-label font-weight-bold">Sạch sẽ:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageComfort * 10)%;" aria-valuenow="@(averageComfort * 10)" aria-valuemin="0" aria-valuemax="100">@averageComfort</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @(averageCleanliness * 10)%;" aria-valuenow="@(averageCleanliness * 10)" aria-valuemin="0" aria-valuemax="100">@averageCleanliness</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
                                 <span class="rating-label font-weight-bold">Thoải mái:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageCleanliness * 10)%;" aria-valuenow="@(averageCleanliness * 10)" aria-valuemin="0" aria-valuemax="100">@averageCleanliness</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @(averageComfort * 10)%;" aria-valuenow="@(averageComfort * 10)" aria-valuemin="0" aria-valuemax="100">@averageComfort</div>
                                 </div>
                             </div>
                             <div class="rating-bar d-flex justify-content-between align-items-center mb-3">
                                 <span class="rating-label font-weight-bold">Địa điểm:</span>
                                 <div class="progress flex-grow-1 mx-3">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(averageLocation * 10)%;" aria-valuenow="@(averageLocation * 10)" aria-valuemin="0" aria-valuemax="100">@averageLocation</div>
+                                    <div class="progress-bar" role="progressbar" style="width: @(averageLocation * 10)%;" aria-valuenow="@(averageLocation * 10)" aria-valuemin="0" aria-valuemax="100">@averageLocation</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             }
+            else
+            {
+                <p class="no-ratings text-center">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!</p>
+            }
         </div>
-        <div class="rating-post">
+        <div class="rating-form mt-4">
+            <h3 class="text-center mb-4">Chia sẻ trải nghiệm của bạn</h3>
             <form asp-controller="Hotel" asp-action="AddReview" method="post">
                 <input type="hidden" name="hotelId" value="@Model.Id" />
                 <div class="rating-container">
@@ -310,8 +325,8 @@
                         <div class="rating-stars">
                             @for (int i = 2; i <= 10; i += 2)
                             {
-                                <input type="radio" id="story-@i" name="Service" value="@i">
-                                <label for="story-@i">@i</label>
+                                <input type="radio" id="service-@i" name="Service" value="@i" required>
+                                <label for="service-@i">@i</label>
                             }
                         </div>
                     </div>
@@ -321,8 +336,8 @@
                         <div class="rating-stars">
                             @for (int i = 2; i <= 10; i += 2)
                             {
-                                <input type="radio" id="gameplay-@i" name="Facilities" value="@i">
-                                <label for="gameplay-@i">@i</label>
+                                <input type="radio" id="facilities-@i" name="Facilities" value="@i" required>
+                                <label for="facilities-@i">@i</label>
                             }
                         </div>
                     </div>
@@ -332,8 +347,8 @@
                         <div class="rating-stars">
                             @for (int i = 2; i <= 10; i += 2)
                             {
-                                <input type="radio" id="graphics-@i" name="Cleanliness" value="@i">
-                                <label for="graphics-@i">@i</label>
+                                <input type="radio" id="cleanliness-@i" name="Cleanliness" value="@i" required>
+                                <label for="cleanliness-@i">@i</label>
                             }
                         </div>
                     </div>
@@ -343,8 +358,8 @@
                         <div class="rating-stars">
                             @for (int i = 2; i <= 10; i += 2)
                             {
-                                <input type="radio" id="sound-@i" name="Comfort" value="@i">
-                                <label for="sound-@i">@i</label>
+                                <input type="radio" id="comfort-@i" name="Comfort" value="@i" required>
+                                <label for="comfort-@i">@i</label>
                             }
                         </div>
                     </div>
@@ -354,76 +369,138 @@
                         <div class="rating-stars">
                             @for (int i = 2; i <= 10; i += 2)
                             {
-                                <input type="radio" id="overall-@i" name="Location" value="@i">
-                                <label for="overall-@i">@i</label>
+                                <input type="radio" id="location-@i" name="Location" value="@i" required>
+                                <label for="location-@i">@i</label>
                             }
                         </div>
                     </div>
-                    <button type="submit" class="submit-btn">Gửi đánh giá</button>
                 </div>
+                @if (ViewBag.CheckReviewOfUser == true)
+                {
+                    <div class="submited mt-3">Cảm ơn bạn đã đánh giá!</div>
+                }
+                else
+                {
+                    <button type="submit" class="submit-btn mt-3">Gửi đánh giá</button>
+                }
             </form>
         </div>
     </div>
     <!--Comment-->
-    <div class="comment-section">
+    <div id="comment" class="comment-section">
         <div class="container">
+            <h2 class="section-title">Nhận xét từ khách hàng</h2>
             <!--Comment Form-->
-            <form asp-controller="Hotel" asp-action="AddComment" method="post" class="mb-4">
+            <form asp-controller="Hotel" asp-action="AddComment" method="post" class="comment-form">
                 <input type="hidden" name="hotelId" value="@Model.Id" />
                 <div class="form-group">
-                    <label for="comment">Nhận xét của bạn:</label>
-                    <textarea class="form-control" id="comment" name="Content" rows="3" required></textarea>
+                    <label for="comment">Chia sẻ trải nghiệm của bạn:</label>
+                    <textarea class="form-control" id="comment" name="Content" rows="4" placeholder="Viết nhận xét của bạn ở đây..." required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Gửi nhận xét</button>
             </form>
-
             <!--Comment List-->
             <div class="comment-list">
-                <h3 class="mb-3">Tất cả nhận xét:</h3>
+                <h3 class="list-title">Tất cả nhận xét</h3>
                 @if (Model.Comments != null && Model.Comments.Any())
                 {
                     @foreach (var comment in Model.Comments)
                     {
-                        <div class="card mb-3">
-                            <div class="card-body">
+                        <div class="comment-card">
+                            <div class="comment-header">
                                 @if (!string.IsNullOrEmpty(comment.UserId))
                                 {
                                     var userManager = ViewBag.UserManager as UserManager<ApplicationUser>;
                                     var commentUser = await userManager.FindByIdAsync(comment.UserId);
-                                    <h5 class="card-title">@commentUser.FullName</h5>
+                                    <h4 class="user-name">@commentUser.FullName</h4>
                                 }
-                                <p class="card-text">@comment.Content</p>
-                                <p class="card-text"><small class="text-muted">@comment.CreatedAt.ToString("dd/MM/yyyy")</small></p>
+                                <span class="comment-date">@comment.CreatedAt.ToString("dd/MM/yyyy")</span>
                             </div>
+                            <p class="comment-text">@comment.Content</p>
                         </div>
                     }
                 }
                 else
                 {
-                    <p>Chưa có nhận xét nào.</p>
+                    <p class="no-comments">Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
                 }
             </div>
         </div>
     </div>
 
     <!----------Service Hotel------------>
-    @if (ViewBag.SelectedServices != null)
-    {
-        <h3>Dịch vụ của khách sạn:</h3>
-        <ul>
-            @foreach (var service in ViewBag.SelectedServices)
-            {
-                <li>@service.Name</li>
-            }
-        </ul>
-    }
+    <div id="hotel-region">
+        @if (ViewBag.SelectedServices != null)
+        {
+            <h3>Dịch vụ của khách sạn:</h3>
+            <div class="container text-center">
+                <div style="list-style: none" class="row row-cols-2 row-cols-lg-4 g-2 g-lg-3">
+                    @foreach (var service in ViewBag.SelectedServices)
+                    {
+                        <div class="col">
+                            <div class="p-3"><i class="fa-solid fa-check text-success"></i> @service.Name</div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <!------------>
+    <div class="section-title">Các khách sạn trong khu vực</div>
+    <div class="hotel-region">
+        @foreach (var hotelByRegionId in ViewBag.HotelForRegionByHotelId)
+        {
+            <div class="item">
+                <a href="@Url.Action("Display", "Hotel", new { id = hotelByRegionId.Id })">
+                    <div class="item-inner">
+                        <img src="@hotelByRegionId.ImageUrl" alt="@hotelByRegionId.Name">
+                        <div class="overlay"></div>
+                        <div class="name-overlay">@hotelByRegionId.Name</div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
     <script>
         const modelId = @Model.Id;
         const bookingNowUrl = '@Url.Action("BookingNow", "Booking")';
     </script>
+    <style>
+        document.addEventListener('DOMContentLoaded', function() {
+                            var navbarMenuGroup = document.querySelector('.navbar_menuGroup');
+
+                            window.addEventListener('scroll', function() {
+                                if (window.scrollY > navbarMenuGroup.offsetTop) {
+                                    navbarMenuGroup.classList.add('sticky');
+                                } else {
+                                    navbarMenuGroup.classList.remove('sticky');
+                                }
+                            });
+                        });
+    </style>
+    <style>
+        document.addEventListener('DOMContentLoaded', function() {
+                                                    var moreButtons = document.querySelectorAll('.more-amenities-btn');
+                                                    moreButtons.forEach(function(button) {
+                                                        button.addEventListener('click', function(e) {
+                                                            e.preventDefault();
+                                                            var roomTypeId = this.getAttribute('data-room-type');
+                                                            var hiddenAmenities = document.getElementById('amenities-' + roomTypeId);
+                                                            if (hiddenAmenities.style.display === 'none') {
+                                                                hiddenAmenities.style.display = 'block';
+                                                                this.textContent = 'Ẩn bớt';
+                                                            } else {
+                                                                hiddenAmenities.style.display = 'none';
+                                                                this.textContent = 'Xem thêm';
+                                                            }
+                                                        });
+                                                    });
+                                                });
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.2/jquery-migrate.min.js"></script>
     <script src="~/js/DisplayHotelJs.js"></script>
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="slick/slick.min.js"></script>
 </body>
 </html>

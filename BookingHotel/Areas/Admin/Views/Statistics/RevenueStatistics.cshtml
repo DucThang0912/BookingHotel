@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Thống kê doanh thu";
+    var doanhThuThang = ViewBag.MonthlyRevenue as Dictionary<string, decimal>;
+    var doanhThuKhachSan = ViewBag.HotelRevenue as Dictionary<string, decimal>;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Thống kê doanh thu</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #4a4a4a;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Thống kê doanh thu</h1>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Doanh thu hàng tháng</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="bieudoDoanhThuThang"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Doanh thu khách sạn</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-action="HotelRevenueStatistics" class="mb-3">
+                            <div class="input-group">
+                                <input type="number" name="hotelId" class="form-control" placeholder="Nhập ID khách sạn" required>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                </div>
+                            </div>
+                        </form>
+                        <canvas id="bieudoDoanhThuKhachSan"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Biểu đồ doanh thu hàng tháng (đường)
+            var doanhThuThangData = @Html.Raw(Json.Serialize(doanhThuThang));
+            if (doanhThuThangData) {
+                var ctxThang = document.getElementById('bieudoDoanhThuThang').getContext('2d');
+                new Chart(ctxThang, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(doanhThuThangData),
+                        datasets: [{
+                            label: 'Doanh thu tháng',
+                            data: Object.values(doanhThuThangData),
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Doanh thu (VNĐ)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Tháng'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Xu hướng doanh thu hàng tháng'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Biểu đồ doanh thu khách sạn (tròn)
+            var doanhThuKhachSanData = @Html.Raw(Json.Serialize(doanhThuKhachSan));
+            if (doanhThuKhachSanData) {
+                var ctxKhachSan = document.getElementById('bieudoDoanhThuKhachSan').getContext('2d');
+                var mauSac = [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)'
+                ];
+                new Chart(ctxKhachSan, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(doanhThuKhachSanData),
+                        datasets: [{
+                            label: 'Doanh thu khách sạn',
+                            data: Object.values(doanhThuKhachSanData),
+                            backgroundColor: mauSac.slice(0, Object.keys(doanhThuKhachSanData).length),
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Phân bố doanh thu theo khách sạn'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        var nhan = context.label || '';
+                                        if (nhan) {
+                                            nhan += ': ';
+                                        }
+                                        nhan += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed);
+                                        return nhan;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

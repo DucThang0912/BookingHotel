@@ -4,46 +4,147 @@
     ViewData["Title"] = "Hotel Details";
 }
 
-<h2>Hotel Details</h2>
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">Name:</dt>
-        <dd class="col-sm-10">@Model.Name</dd>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
 
-        <dt class="col-sm-2">Description:</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
+        .container {
+            margin-top: 20px;
+        }
 
-        <dt class="col-sm-2">Address:</dt>
-        <dd class="col-sm-10">@Model.Address</dd>
+        .hotel-header {
+            text-align: center;
+            padding: 30px 0;
+            background-color: #343a40;
+            color: white;
+        }
 
-        <dt class="col-sm-2">Region:</dt>
-        <dd class="col-sm-10">@Model.Region?.Name</dd>
-
-        <dt class="col-sm-2">Hotel Image:</dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <img src="@Model.ImageUrl" alt="Hotel Image" style="max-width: 200px;" />
+            .hotel-header h2 {
+                margin: 0;
+                font-size: 2.5rem;
             }
-            else
-            {
-                <p>No image available</p>
-            }
-        </dd>
 
-        <dt class="col-sm-2">Additional Images:</dt>
-        <dd class="col-sm-10">
-            @if (Model.Images != null && Model.Images.Any())
-            {
-                foreach (var image in Model.Images)
-                {
-                    <img src="@image.ImageUrl" alt="Additional Image" style="max-width: 200px; margin-bottom: 10px;" />
-                }
+        .hotel-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .hotel-details dt {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .hotel-details dd {
+            margin-bottom: 20px;
+        }
+
+        .hotel-details img {
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .additional-images img {
+            margin-right: 10px;
+        }
+
+        .no-image {
+            font-style: italic;
+            color: #999;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #343a40;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-back:hover {
+                background-color: #495057;
             }
-            else
-            {
-                <p>No additional images available</p>
-            }
-        </dd>
-    </dl>
-</div>
+
+        .divider {
+            border-bottom: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="hotel-header">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+
+    <div class="container">
+        <a href="javascript:history.back()" class="btn-back">Back to Listings</a>
+        <div class="hotel-content">
+            <dl class="row hotel-details">
+                <dt class="col-sm-2">Name:</dt>
+                <dd class="col-sm-10">@Model.Name</dd>
+                <div class="divider col-12"></div>
+
+                <dt class="col-sm-2">Description:</dt>
+                <dd class="col-sm-10">@Model.Description</dd>
+                <div class="divider col-12"></div>
+
+                <dt class="col-sm-2">Address:</dt>
+                <dd class="col-sm-10">@Model.Address</dd>
+                <div class="divider col-12"></div>
+
+                <dt class="col-sm-2">Region:</dt>
+                <dd class="col-sm-10">@Model.Region?.Name</dd>
+                <div class="divider col-12"></div>
+
+                <dt class="col-sm-2">Hotel Image:</dt>
+                <dd class="col-sm-10">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="Hotel Image" class="img-fluid" style="max-width: 300px;" />
+                    }
+                    else
+                    {
+                        <p class="no-image">No image available</p>
+                    }
+                </dd>
+                <div class="divider col-12"></div>
+
+                <dt class="col-sm-2">Additional Images:</dt>
+                <dd class="col-sm-10 additional-images">
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        foreach (var image in Model.Images)
+                        {
+                            <img src="@image.ImageUrl" alt="Additional Image" class="img-fluid" style="max-width: 150px;" />
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-image">No additional images available</p>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

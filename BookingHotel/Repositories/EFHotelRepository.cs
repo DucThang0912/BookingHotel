@@ -2,6 +2,7 @@
 using BookingHotel.Repositories;
 using BookingHotel.Data;
 using BookingHotel.Models;
+using Microsoft.VisualBasic;
 
 namespace BookingHotel.Repositories
 {
@@ -55,6 +56,10 @@ namespace BookingHotel.Repositories
             var hotelImages = _context.HotelImages.Where(hi => hi.HotelId == hotelId);
             _context.HotelImages.RemoveRange(hotelImages);
             _context.SaveChanges();
+        }
+        public async Task<IEnumerable<Hotel>> GetHotelForRegionByHotelId(int id, int regionId)
+        {
+            return await _context.Hotels.Where(h => h.RegionId == regionId && h.Id != id).ToListAsync();
         }
     }
 }

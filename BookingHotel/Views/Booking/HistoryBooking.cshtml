@@ -1,0 +1,65 @@
+﻿@model IEnumerable<BookingHotel.Models.Booking>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách đặt phòng</title>
+    <!-- Kết nối với Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS tùy chỉnh */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding-bottom: 20px;
+        }
+
+        .booking-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+            .booking-card h3 {
+                margin-bottom: 10px;
+                color: #007bff;
+            }
+
+            .booking-card p {
+                margin-bottom: 5px;
+            }
+
+        .btn-container {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Danh sách đặt phòng</h2>
+
+        <!-- Vòng lặp để hiển thị danh sách các đặt phòng -->
+        @foreach (var booking in Model)
+        {
+            <div class="booking-card">
+                <h3>Booking ID: @booking.Id</h3>
+                <p>First Name: @booking.firstName</p>
+                <p>Last Name: @booking.LastName</p>
+                <p>Email: @booking.Email</p>
+                <p>Phone Number: @booking.PhoneNumber</p>
+                <p>Total Amount: @booking.TotalAmount</p>
+                <p>Created At: @booking.CreatedAt</p>
+                <p>Notes: @booking.Notes</p>
+                <div class="btn-container">
+                    <a asp-action="ListBookingDetail" asp-route-id="@booking.Id" class="btn btn-info">Xem chi tiết</a>
+                    <a asp-action="PrintInvoice" asp-route-id="@booking.Id" class="btn btn-primary">In hóa đơn</a>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

@@ -144,15 +144,15 @@
         <div class="row">
             <div class="col-md-3 bg-light" style="min-height: calc(100vh - 250px);">
                 <h5>Bộ lọc</h5>
-                <div class="form-group">
-                    <label for="price-range">Ngân sách (một đêm)</label>
-                    <input type="range" class="form-control-range" id="price-range" min="100000" max="3000000">
+                <div class="sort">
+                    <label for="sort-filter">Sắp xếp theo:</label>
+                    <select class="form-control" id="sort-filter">
+                        <option value="most_viewed">Nhiều người xem nhất</option>
+                        <option value="least_viewed">Ít người xem nhất</option>
+                        <option value="latest">Mới nhất</option>
+                        <option value="oldest">Cũ nhất</option>
+                    </select>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="amenity1">
-                    <label class="form-check-label" for="amenity1">Khách sạn</label>
-                </div>
-                <!-- Thêm các bộ lọc khác tại đây -->
             </div>
             <div class="col-md-9">
                 @foreach (var item in Model)
@@ -166,7 +166,10 @@
                                 <div class="card-body">
                                     <h5 class="card-title">@item.Name</h5>
                                     <p class="card-text">@item.Address</p>
-                                    <a class="btn btn-primary btn-details" asp-area="" asp-controller="Hotel" asp-action="Display" asp-route-id="@item.Id">Xem chi tiết</a>
+                                    <a class="btn btn-primary btn-details" asp-area="" asp-controller="Hotel" asp-action="Display" asp-route-id="@item.Id" data-hotel-id="@item.Id">Xem chi tiết</a>
+                                    <div class="interaction-count" hidden>
+                                        Số lượng tương tác: <span class="count">0</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -175,6 +178,7 @@
             </div>
         </div>
     </div>
+    @* <button id="clear-interactions" class="btn btn-danger">Xoá tất cả tương tác</button> *@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -184,7 +188,90 @@
     <script>
         $('.single-item').slick();
     </script>
+    @* <script>
+        // Xử lý sự kiện click trên nút "Xoá tất cả tương tác"
+        $('#clear-interactions').click(function () {
+            // Xoá dữ liệu tương tác từ localStorage
+            localStorage.removeItem('interactionData');
+            // Cập nhật số lượng tương tác trên giao diện
+            updateInteractionCounts();
+        });
 
+     </script> *@
+    <!-- Hotjar Tracking Code for Site 4992973 (name missing) -->
+    <script>
+        (function (h, o, t, j, a, r) {
+            h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+            h._hjSettings = { hjid: 4992973, hjsv: 6 };
+            a = o.getElementsByTagName('head')[0];
+            r = o.createElement('script'); r.async = 1;
+            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Lấy dữ liệu tương tác từ localStorage (nếu có)
+            var interactionData = JSON.parse(localStorage.getItem('interactionData')) || {};
+
+            // Xử lý sự kiện click trên nút "Xem chi tiết"
+            $('.btn-details').click(function () {
+                var hotelId = $(this).data('hotel-id');
+                var currentCount = interactionData[hotelId] || { count: 0, timestamps: {} };
+
+                // Lưu thời gian tương tác mới
+                var currentTime = new Date().toISOString();
+                currentCount.count++;
+                currentCount.timestamps[currentTime] = true;
+
+                interactionData[hotelId] = currentCount;
+                localStorage.setItem('interactionData', JSON.stringify(interactionData));
+                updateInteractionCounts();
+            });
+
+            // Cập nhật số lượng tương tác trên giao diện
+            function updateInteractionCounts() {
+                $('.interaction-count .count').each(function () {
+                    var hotelId = $(this).closest('.card').find('.btn-details').data('hotel-id');
+                    var count = interactionData[hotelId] ? interactionData[hotelId].count : 0;
+                    $(this).text(count);
+                });
+            }
+
+            // Gọi hàm updateInteractionCounts() lần đầu tiên để hiển thị số lượng tương tác
+            updateInteractionCounts();
+
+            // Xử lý sự kiện thay đổi của bộ lọc sắp xếp
+            $('#sort-filter').change(function () {
+                var sortBy = $(this).val();
+                sortHotels(sortBy);
+            });
+
+            // Hàm sắp xếp danh sách khách sạn
+            function sortHotels(sortBy) {
+                var $hotels = $('#hotel-list .card');
+
+                $hotels.sort(function (a, b) {
+                    var aViewCount = $(a).data('view-count');
+                    var bViewCount = $(b).data('view-count');
+                    var aCreatedDate = new Date($(a).data('created-date'));
+                    var bCreatedDate = new Date($(b).data('created-date'));
+
+                    if (sortBy === 'most_viewed') {
+                        return bViewCount - aViewCount;
+                    } else if (sortBy === 'least_viewed') {
+                        return aViewCount - bViewCount;
+                    } else if (sortBy === 'latest') {
+                        return bCreatedDate - aCreatedDate;
+                    } else if (sortBy === 'oldest') {
+                        return aCreatedDate - bCreatedDate;
+                    }
+                });
+
+                $('#hotel-list').html($hotels);
+            }
+        });
+    </script>
 
 </body>
 </html>
